@@ -1,4 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm'
+import { UserType } from './UserType'
+import { ProductTemplate } from './ProductTemplate'
 
 @Entity()
 export class User {
@@ -12,5 +14,15 @@ export class User {
     lastName: string
 
     @Column()
-    age: number
+    email: string
+
+    @Column()
+    passwordDigest: string
+
+    @ManyToOne(() => UserType, userType => userType.users)
+    @JoinColumn()
+    userType: UserType
+
+    @OneToMany(() => ProductTemplate, productTemplate => productTemplate.user)
+    productTemplates: ProductTemplate[]
 }
