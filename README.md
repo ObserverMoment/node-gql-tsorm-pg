@@ -1,4 +1,4 @@
-# Awesome Project Build with TypeORM
+# Scaffold for graphql api using TypeORM and postgres.
 
 Steps to run this project:
 
