@@ -2,23 +2,26 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 't
 import { Organisation } from './Organisation'
 
 @Entity()
-export class User {
+export class CatalogueItem {
     @PrimaryGeneratedColumn()
     id: number
 
     @Column()
-    firstName: string
+    code: string
 
     @Column()
-    lastName: string
+    title: string
 
     @Column()
-    email: string
+    cbm: number
 
     @Column()
-    passwordDigest: string
+    productNotes: string
 
-    @ManyToOne(() => Organisation, organisation => organisation.users)
+    @Column()
+    packagingNotes: string
+
+    @ManyToOne(() => Organisation, organisation => organisation.catalogueItems)
     @JoinColumn()
     organisation: Organisation
 }

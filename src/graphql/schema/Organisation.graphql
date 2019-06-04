@@ -1,0 +1,22 @@
+type Organisation {
+  id: ID!
+  name: String!
+  description: String
+  users: [User]!
+  catalogueItems: [CatalogueItem!]!
+}
+
+extend type Query {
+  organisation(id: ID!): Organisation!
+}
+
+extend type Mutation {
+  createOrganisation(input: OrganisationInput!): Organisation!
+  updateOrganisation(id: ID!, input: OrganisationInput!): Organisation!
+  deleteOrganisation(id: ID!): Organisation!
+}
+
+input OrganisationInput {
+  name: String!
+  description: String
+}

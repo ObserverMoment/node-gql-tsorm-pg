@@ -1,0 +1,28 @@
+type User {
+  firstname: String!
+  lastname: String!
+  email: String!
+  organisation: Organisation!
+}
+
+extends type Query {
+  user(id: ID!): User!
+  users(organisationId: ID!): [Users!]!
+}
+
+extends type Mutation {
+  createUser(input: CreateUserInput!): User!
+  updateUser(input: UpdateUserInput!): User!
+}
+
+input CreateUserInput {
+  firstname: String!
+  lastname: String!
+  email: String!
+  password: String!
+}
+
+input UpdateUserInput {
+  firstname: String
+  lastname: String
+}
