@@ -1,8 +1,9 @@
 type User {
+  id: ID!
   firstname: String!
   lastname: String!
   email: String!
-  organisation: Organisation!
+  organisation: Organisation
 }
 
 extend type Query {
@@ -20,6 +21,7 @@ input CreateUserInput {
   lastname: String!
   email: String!
   password: String!
+  organisationId: ID!
 }
 
 input UpdateUserInput {

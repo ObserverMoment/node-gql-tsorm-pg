@@ -7,16 +7,16 @@ export default class User {
     id: number
 
     @Column()
-    firstName: string
+    firstname: string
 
     @Column()
-    lastName: string
+    lastname: string
 
     @Column()
     email: string
 
     @Column()
-    passwordDigest: string
+    password: string
 
     @ManyToOne(() => Organisation, organisation => organisation.users)
     @JoinColumn()
