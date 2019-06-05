@@ -1,17 +1,17 @@
 import path from 'path'
 import fs from 'fs'
 import glob from 'glob'
+import deepmerge from 'deepmerge'
 
-const pathToResolvers = path.join(__dirname, './resolvers')
 const pathToTypeDefs = path.join(__dirname, './typeDefs')
 
-const graphqlTypes = glob
+export const typeDefs = glob
   .sync(`${pathToTypeDefs}/*.graphql`)
   .map(x => fs.readFileSync(x, { encoding: 'utf8' }))
 
-const resolvers = glob
-  .sync(`${pathToResolvers}/*.?s`)
-  .map(resolver => require(resolver).resolvers)
+const pathToResolvers = path.join(__dirname, './resolvers')
 
-console.log('graphqlTypes', graphqlTypes)
-console.log('resolvers', resolvers)
+export const resolvers = deepmerge.all(
+  glob.sync(`${pathToResolvers}/*.?s`)
+      .map(resolver => require(resolver).resolvers)
+)

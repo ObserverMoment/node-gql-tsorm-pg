@@ -10,13 +10,13 @@ type CatalogueItem {
 
 extend type Query {
   catalogueItem(id: ID!): CatalogueItem!
-  catalogeItems(): [CatalogueItem!]!
+  catalogueItems: [CatalogueItem!]!
 }
 
 extend type Mutation {
   createCatalogueItem(input: CatalogueItemInput!): CatalogueItem!
-  updateCatalogueItem(input: CatalogueItemInput!): CatalogueItem!
-  deleteCatalogueItem(id: ID!): CatalogueItem!
+  updateCatalogueItem(id: ID!, input: CatalogueItemInput!): CatalogueItem!
+  deleteCatalogueItem(id: ID!): Boolean!
 }
 
 input CatalogueItemInput {

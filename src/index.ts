@@ -3,6 +3,7 @@ import { createConnection } from 'typeorm'
 import  express from 'express'
 import cors from 'cors'
 import { ApolloServer } from 'apollo-server-express'
+import { typeDefs, resolvers } from './graphql/index'
 
 createConnection().then(async connection => {
   console.log('Connected to DB')
@@ -10,11 +11,8 @@ createConnection().then(async connection => {
   const app = express()
   app.use(cors())
 
-  const schema = {}
-  const resolvers = {}
-
   const server = new ApolloServer({
-    typeDefs: schema,
+    typeDefs,
     resolvers,
   });
 

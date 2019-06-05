@@ -5,12 +5,12 @@ type User {
   organisation: Organisation!
 }
 
-extends type Query {
+extend type Query {
   user(id: ID!): User!
-  users(organisationId: ID!): [Users!]!
+  users: [User!]!
 }
 
-extends type Mutation {
+extend type Mutation {
   createUser(input: CreateUserInput!): User!
   updateUser(input: UpdateUserInput!): User!
 }
