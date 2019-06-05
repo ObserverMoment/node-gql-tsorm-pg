@@ -1,9 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm'
-import { User } from './User'
-import { CatalogueItem } from './CatalogueItem'
+import User from './User'
+import CatalogueItem from './CatalogueItem'
 
 @Entity()
-export class Organisation {
+export default class Organisation {
   @PrimaryGeneratedColumn()
   id: number
 

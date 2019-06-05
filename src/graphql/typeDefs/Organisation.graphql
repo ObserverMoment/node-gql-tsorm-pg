@@ -13,7 +13,7 @@ extend type Query {
 extend type Mutation {
   createOrganisation(input: OrganisationInput!): Organisation!
   updateOrganisation(id: ID!, input: OrganisationInput!): Organisation!
-  deleteOrganisation(id: ID!): Organisation!
+  deleteOrganisation(id: ID!): Boolean!
 }
 
 input OrganisationInput {

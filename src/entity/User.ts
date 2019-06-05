@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm'
-import { Organisation } from './Organisation'
+import Organisation from './Organisation'
 
 @Entity()
-export class User {
+export default class User {
     @PrimaryGeneratedColumn()
     id: number
 
