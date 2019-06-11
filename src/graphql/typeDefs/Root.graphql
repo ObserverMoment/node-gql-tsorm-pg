@@ -1,5 +1,6 @@
 type Query {
-  _empty: String
+  me: User,
+  login: User
 }
 type Mutation {
   _empty: String

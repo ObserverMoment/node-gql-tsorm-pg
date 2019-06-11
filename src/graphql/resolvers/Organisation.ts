@@ -1,24 +1,32 @@
 import { getRepository } from 'typeorm'
 import Organisation from '../../entity/Organisation'
 
-const getRepo = () => getRepository(Organisation)
-
 export const resolvers = {
   Query: {
-    async organisation (parent, { id }, context, info) {
-      return await getRepo().findOne(id)
+    async organisation (root, { id }, context, info) {
+      return await getRepository(Organisation).findOne(id)
     }
   },
   Mutation: {
-    async createOrganisation (parent, { input }, context, info) {
-      return await getRepo().create({ ...input })
+    async createOrganisation (root, { input }, context, info) {
+      return await getRepository(Organisation).create({ ...input })
     },
-    async updateOrganisation (parent, { id, input }, context, info) {
-      return await getRepo().update(id, { ...input })
+    async updateOrganisation (root, { id, input }, context, info) {
+      return await getRepository(Organisation).update(id, { ...input })
     },
-    async deleteOrganisation (parent, { id }, context, info) {
-      await getRepo().delete(id)
+    async deleteOrganisation (root, { id }, context, info) {
+      await getRepository(Organisation).delete(id)
       return true
+    }
+  },
+  Organisation: {
+    async users (organisation, { input }, context, info) {
+      return (await getRepository(Organisation)
+                    .findOne(organisation.id, { relations: ['users'] })).users
+    },
+    async catalogueItems (organisation, { input }, context, info) {
+      return (await getRepository(Organisation)
+                    .findOne(organisation.id, { relations: ['catalogueItems'] })).catalogueItems
     }
   }
 }
