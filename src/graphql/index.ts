@@ -13,5 +13,5 @@ const pathToResolvers = path.join(__dirname, './resolvers')
 
 export const resolvers = deepmerge.all(
   glob.sync(`${pathToResolvers}/*.?s`)
-      .map(resolver => require(resolver).resolvers)
+    .map(resolver => require(resolver).resolvers)
 )

@@ -1,5 +1,4 @@
-import { getRepository } from 'typeorm'
-import { getConnection } from 'typeorm'
+import { getRepository, getConnection } from 'typeorm'
 import { AuthenticationError } from 'apollo-server'
 import scrypt from 'scrypt'
 
@@ -8,7 +7,8 @@ import User from '../../entity/User'
 export const resolvers = {
   Query: {
     async me (root, { userId }, context, info) {
-      return await getRepository(User).findOne(userId)
+      const user = await getRepository(User).findOne(userId)
+      return user
     },
     async login (root, { email, password }, context, info) {
       try {
@@ -24,10 +24,12 @@ export const resolvers = {
       }
     },
     async user (root, { id }, context, info) {
-      return await getRepository(User).findOne(id)
+      const user = await getRepository(User).findOne(id)
+      return user
     },
     async users (root, args, context, info) {
-      return await getRepository(User).find()
+      const users = await getRepository(User).find()
+      return users
     }
   },
   Mutation: {
@@ -43,19 +45,20 @@ export const resolvers = {
       const savedUser = await userRepo.save(newUser)
       // Relation: Assign to an organisation.
       await getConnection().createQueryBuilder()
-            .relation(User, 'organisation')
-            .of(savedUser.id)
-            .set(input.organisationId)
+        .relation(User, 'organisation')
+        .of(savedUser.id)
+        .set(input.organisationId)
       return savedUser
     },
     async updateUser (root, { id, input }, context, info) {
-      return await getRepository(User).update(id, { ...input })
+      const user = await getRepository(User).update(id, { ...input })
+      return user
     }
   },
   User: {
     async organisation (user, { input }, context, info) {
       return (await getRepository(User)
-                    .findOne(user.id, { relations: ['organisation']})).organisation
+        .findOne(user.id, { relations: ['organisation'] })).organisation
     }
   }
 }

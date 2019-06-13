@@ -4,15 +4,18 @@ import Organisation from '../../entity/Organisation'
 export const resolvers = {
   Query: {
     async organisation (root, { id }, context, info) {
-      return await getRepository(Organisation).findOne(id)
+      const organisation = await getRepository(Organisation).findOne(id)
+      return organisation
     }
   },
   Mutation: {
     async createOrganisation (root, { input }, context, info) {
-      return await getRepository(Organisation).create({ ...input })
+      const organisation = await getRepository(Organisation).create({ ...input })
+      return organisation
     },
     async updateOrganisation (root, { id, input }, context, info) {
-      return await getRepository(Organisation).update(id, { ...input })
+      const organisation = await getRepository(Organisation).update(id, { ...input })
+      return organisation
     },
     async deleteOrganisation (root, { id }, context, info) {
       await getRepository(Organisation).delete(id)
@@ -22,11 +25,11 @@ export const resolvers = {
   Organisation: {
     async users (organisation, { input }, context, info) {
       return (await getRepository(Organisation)
-                    .findOne(organisation.id, { relations: ['users'] })).users
+        .findOne(organisation.id, { relations: ['users'] })).users
     },
     async catalogueItems (organisation, { input }, context, info) {
       return (await getRepository(Organisation)
-                    .findOne(organisation.id, { relations: ['catalogueItems'] })).catalogueItems
+        .findOne(organisation.id, { relations: ['catalogueItems'] })).catalogueItems
     }
   }
 }

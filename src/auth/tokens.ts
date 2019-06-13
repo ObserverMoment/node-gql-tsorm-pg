@@ -14,18 +14,20 @@ interface SignPayload {
   expiresIn: string
 }
 
-export const generateAccessToken = async (userId: string | String) => {
+export const generateAccessToken = async (userId: string) => {
   const signPayload: SignPayload = {
     issuer: process.env.ACCESS_TOKEN_ISSUER,
     subject: userId.toString(),
     audience: process.env.ACCESS_TOKEN_AUDIENCE,
-    expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+    expiresIn: process.env.ACCESS_TOKEN_EXPIRY
   }
   try {
-    return await jwt.sign({ userId },
-                          process.env.ACCESS_TOKEN_SECRET,
-                          signPayload
-                        )
+    const token = await jwt.sign(
+      { userId },
+      process.env.ACCESS_TOKEN_SECRET,
+      signPayload
+    )
+    return token as string
   } catch (err) {
     console.log(err)
     throw Error('There was a problem generating the JWT access token')
@@ -33,11 +35,11 @@ export const generateAccessToken = async (userId: string | String) => {
 }
 
 export const checkAccessToken = (req: any) => {
-  const authHeader = req.headers['x-access-token'] || req.headers['authorization']; // Express headers are auto converted to lowercase
+  const authHeader = req.headers['x-access-token'] || req.headers['authorization'] // Express headers are auto converted to lowercase
   if (!authHeader) {
     return null // For non registered or none logged in users apollo server context.userId will be null. They can view unprotected resources.
   }
-  if (!authHeader.StartsWith("Bearer ")) {
+  if (!authHeader.StartsWith('Bearer ')) {
     throw Error('Access token header not correctly formatted')
   }
   try {
