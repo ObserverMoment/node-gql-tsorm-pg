@@ -1,5 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm'
-import Organisation from './Organisation'
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm'
+import Role from './Role'
 
 @Entity()
 export default class User {
@@ -18,7 +18,9 @@ export default class User {
     @Column()
     password: string
 
-    @ManyToOne(() => Organisation, organisation => organisation.users)
-    @JoinColumn()
-    organisation: Organisation
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    tokenValidAfter: Date
+
+    @OneToMany(() => Role, role => role.user)
+    roles: Role[]
 }

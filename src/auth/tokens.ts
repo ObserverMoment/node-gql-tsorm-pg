@@ -1,10 +1,16 @@
 import jwt from 'jsonwebtoken'
+import { getRepository } from 'typeorm'
+import { AuthenticationError } from 'apollo-server'
+import { CustomRequest } from '../types/express'
+
+import User from '../entity/User'
 
 interface VerifiedPayload {
   issuer?: string
-  subject?: string
+  userId?: string
   audience?: string
   expiresIn?: string
+  iat?: string
 }
 
 interface SignPayload {
@@ -14,7 +20,7 @@ interface SignPayload {
   expiresIn: string
 }
 
-export const generateAccessToken = async (userId: string) => {
+export const generateAccessToken = async (userId: string | number): Promise<string> => {
   const signPayload: SignPayload = {
     issuer: process.env.ACCESS_TOKEN_ISSUER,
     subject: userId.toString(),
@@ -27,35 +33,41 @@ export const generateAccessToken = async (userId: string) => {
       process.env.ACCESS_TOKEN_SECRET,
       signPayload
     )
-    return token as string
+    return token
   } catch (err) {
     console.log(err)
     throw Error('There was a problem generating the JWT access token')
   }
 }
 
-export const checkAccessToken = (req: any) => {
-  const authHeader = req.headers['x-access-token'] || req.headers['authorization'] // Express headers are auto converted to lowercase
-  if (!authHeader) {
-    return null // For non registered or none logged in users apollo server context.userId will be null. They can view unprotected resources.
-  }
-  if (!authHeader.StartsWith('Bearer ')) {
-    throw Error('Access token header not correctly formatted')
-  }
+export const checkAccessToken = async (req: CustomRequest): Promise<User> => {
+  const authHeader: string = req.headers['authorization'] as string
   try {
-    const accessToken = authHeader.substring(7, authHeader.length)
-    const decodedPayload: VerifiedPayload | string = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET)
-    console.log('decodedPayload', decodedPayload)
-
-    if (typeof decodedPayload === 'string') {
-      throw Error('Access token not valid')
+    if (!authHeader) {
+      throw new AuthenticationError('You must be logged in to access this resource')
     }
-    // Token is valid and not expired.
-    // TODO: Check that the iat on the token is not before User.tokenValidIfAfter date from DB
+    if (authHeader.substring(0, 7) !== 'Bearer ') {
+      throw new AuthenticationError('Access token header not correctly formatted')
+    }
+    const accessToken: string = authHeader.substring(7, authHeader.length)
+    const decodedPayload: VerifiedPayload | string = await jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET)
 
-    return decodedPayload.subject
+    if (!decodedPayload || typeof decodedPayload === 'string') {
+      throw new AuthenticationError('Access token not valid - token not found or type is not string')
+    }
+
+    const user: User = await getRepository(User).findOne(decodedPayload.userId)
+    if (!user) {
+      throw new AuthenticationError('Access token not valid - no associated user found')
+    }
+    // Check that the iat on the token is not before User.tokenValidAfter date from DB - jwt.iat is time from epoch in s, not ms.
+    if (new Date(decodedPayload.iat).valueOf() <= new Date(user.tokenValidAfter).valueOf() / 1000) {
+      throw new AuthenticationError('This access token is no longer valid')
+    }
+
+    return user
   } catch (err) {
     console.log(err)
-    return null
+    return err
   }
 }

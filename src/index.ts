@@ -1,31 +1,35 @@
+import 'dotenv/config'
 import 'reflect-metadata'
 import { createConnection } from 'typeorm'
-import express, { Request, Response } from 'express'
+import express from 'express'
 import cors from 'cors'
 import { ApolloServer } from 'apollo-server-express'
 import { typeDefs, resolvers } from './graphql/index'
-import { checkAccessToken, generateAccessToken } from './auth/tokens'
-require('dotenv').config()
+import { checkAccessToken } from './auth/tokens'
+import schemaDirectives from './graphql/directives/index'
 
 createConnection().then(async connection => {
   console.log('Connected to DB')
 
   const app = express()
-  app.use(cors())
-  app.use(async (req: Request, res: Response, next) => {
-    console.log('req headers', req.headers)
-    const userId = checkAccessToken(req)
-    if (userId) {
-      req.userId = userId
-      res.freshToken = await generateAccessToken(userId)
+  app.use(cors()) // TODO: I think this can be set on the apollo server middleware below - not in express middleware.
+
+  const createContext = async ({ req }) => {
+    try {
+      const user = await checkAccessToken(req)
+      return {
+        req, user
+      }
+    } catch (err) {
+      throw new Error(err)
     }
-    next()
-  })
+  }
 
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: (req: any) => ({ userId: req.userId })
+    context: createContext,
+    schemaDirectives
   })
 
   server.applyMiddleware({ app, path: '/api' })

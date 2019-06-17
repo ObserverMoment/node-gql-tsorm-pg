@@ -1,0 +1,16 @@
+extend type Query {
+  me: User
+  login(email: String!, password: String!): String
+}
+
+extend type Mutation {
+  registerNewUser(input: RegisterUserInput!): User!
+}
+
+input RegisterUserInput {
+  firstname: String!
+  lastname: String!
+  email: String!
+  password: String!
+  organisationId: ID!
+}

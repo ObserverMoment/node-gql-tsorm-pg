@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm'
-import User from './User'
+import Role from './Role'
 import CatalogueItem from './CatalogueItem'
 
 @Entity()
@@ -13,8 +13,8 @@ export default class Organisation {
   @Column()
   description: string
 
-  @OneToMany(() => User, user => user.organisation)
-  users: User[]
+  @OneToMany(() => Role, role => role.organisation)
+  roles: Role[]
 
   @OneToMany(() => CatalogueItem, catalogueItem => catalogueItem.organisation)
   catalogueItems: CatalogueItem[]

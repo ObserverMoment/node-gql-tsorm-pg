@@ -1,6 +1,11 @@
+enum Role {
+  ADMIN
+  LEADER
+  USER
+}
+
 type Query {
-  me: User,
-  login: User
+  _empty: String
 }
 type Mutation {
   _empty: String

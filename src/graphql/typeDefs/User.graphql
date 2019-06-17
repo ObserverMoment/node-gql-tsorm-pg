@@ -12,16 +12,7 @@ extend type Query {
 }
 
 extend type Mutation {
-  createUser(input: CreateUserInput!): User!
   updateUser(input: UpdateUserInput!): User!
-}
-
-input CreateUserInput {
-  firstname: String!
-  lastname: String!
-  email: String!
-  password: String!
-  organisationId: ID!
 }
 
 input UpdateUserInput {
