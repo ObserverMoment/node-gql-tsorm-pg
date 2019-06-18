@@ -1,12 +1,22 @@
 import { getRepository, getConnection } from 'typeorm'
 import Role from '../entity/Role'
 
+// For creating context
+export const getUserScopes = async (user) => {
+  const roles = await getUserRoles(user)
+  return roles.reduce((acum, next) => ({
+    ...acum,
+    [next.organisation.id]: next.roleType.id
+  }), {})
+}
+
 export const getUserRoles = async (user) => {
   const repo = getRepository(Role)
   const userRoles = await repo.find({ user: user.id })
-  return userRoles
+  return userRoles || []
 }
 
+// For checking user scope against object scope.
 export const getIdFromParent = async (objectType, object) => {
   const organisation = await getConnection()
     .createQueryBuilder()

@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { getRepository } from 'typeorm'
 import { AuthenticationError } from 'apollo-server'
-import { CustomRequest } from '../types/express'
 
 import User from '../entity/User'
 
@@ -40,11 +39,11 @@ export const generateAccessToken = async (userId: string | number): Promise<stri
   }
 }
 
-export const checkAccessToken = async (req: CustomRequest): Promise<User> => {
+export const checkAccessToken = async (req): Promise<User> => {
   const authHeader: string = req.headers['authorization'] as string
   try {
     if (!authHeader) {
-      throw new AuthenticationError('You must be logged in to access this resource')
+      return null
     }
     if (authHeader.substring(0, 7) !== 'Bearer ') {
       throw new AuthenticationError('Access token header not correctly formatted')

@@ -5,7 +5,8 @@ import express from 'express'
 import cors from 'cors'
 import { ApolloServer } from 'apollo-server-express'
 import { typeDefs, resolvers } from './graphql/index'
-import { checkAccessToken } from './auth/tokens'
+import { checkAccessToken, generateAccessToken } from './auth/tokens'
+import { getUserScopes } from './auth/scopes'
 import schemaDirectives from './graphql/directives/index'
 
 createConnection().then(async connection => {
@@ -14,11 +15,12 @@ createConnection().then(async connection => {
   const app = express()
   app.use(cors()) // TODO: I think this can be set on the apollo server middleware below - not in express middleware.
 
-  const createContext = async ({ req }) => {
+  const createContext = async (req) => {
     try {
       const user = await checkAccessToken(req)
+      const scopes = user && await getUserScopes(user)
       return {
-        req, user
+        req, user, scopes
       }
     } catch (err) {
       throw new Error(err)
@@ -28,7 +30,10 @@ createConnection().then(async connection => {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: createContext,
+    context: async ({ req }) => {
+      const context = await createContext(req)
+      return context
+    },
     schemaDirectives
   })
 

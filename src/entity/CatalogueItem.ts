@@ -22,6 +22,6 @@ export default class CatalogueItem {
     packagingNotes: string
 
     @ManyToOne(() => Organisation, organisation => organisation.catalogueItems)
-    @JoinColumn()
+    @JoinColumn({ name: 'organisationId' })
     organisation: Organisation
 }
