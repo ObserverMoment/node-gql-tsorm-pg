@@ -4,7 +4,7 @@ import ShipmentCost from './ShipmentCost'
 import ProductLine from './ProductLine'
 
 @Entity()
-export default class Container {
+export default class Shipment {
     @PrimaryGeneratedColumn()
     id: number
 
