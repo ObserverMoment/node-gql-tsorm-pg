@@ -2,18 +2,15 @@ import { getRepository, getConnection } from 'typeorm'
 import { AuthenticationError } from 'apollo-server'
 import scrypt from 'scrypt'
 
-import User from '../../entity/User'
-import Role from '../../entity/Role'
+import User from '../../entity/roles/User'
+import Role from '../../entity/roles/Role'
 
 import { generateAccessToken } from '../../auth/tokens'
 
 export const resolvers = {
   Query: {
     async me (root, args, { user }, info) {
-      if (!user) {
-        throw new AuthenticationError(`You have to be logged in to run a 'me' query`)
-      }
-      return user
+      return user && user
     },
     async login (root, { email, password }, { res }, info) {
       const user = await getRepository(User).findOne({ where: { email } })

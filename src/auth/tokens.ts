@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 import { getRepository } from 'typeorm'
 import { AuthenticationError } from 'apollo-server'
 
-import User from '../entity/User'
+import User from '../entity/roles/User'
 
 interface VerifiedPayload {
   issuer?: string

@@ -1,5 +1,5 @@
-import { getRepository, getConnection } from 'typeorm'
-import Role from '../entity/Role'
+import { getRepository } from 'typeorm'
+import Role from '../entity/roles/Role'
 
 // For creating context
 export const getUserScopes = async (user) => {
@@ -16,34 +16,34 @@ export const getUserRoles = async (user) => {
   return userRoles || []
 }
 
-// For checking user scope against object scope.
-export const getIdFromParent = async (objectType, object) => {
-  const organisation = await getConnection()
-    .createQueryBuilder()
-    .relation(objectType, 'organisation')
-    .of(object.id)
-    .loadOne()
-  return organisation.id
-}
-
-export const getIdFromGrandParent = async (objectType, parentType, object) => {
-  const parent = await getConnection()
-    .createQueryBuilder()
-    .relation(objectType, parentType)
-    .of(object.id)
-    .loadOne()
-  const organisation = await getConnection()
-    .createQueryBuilder()
-    .relation(parent, 'organisation')
-    .of(object.id)
-    .loadOne()
-  return organisation.id
-}
-
-// Data access is scoped to the owning organisation.
-export const getOrganisationId = async (objectType, object) => {
-  return {
-    CatalogueItem: () => getIdFromParent(objectType, object),
-    CostOfSale: () => getIdFromGrandParent(objectType, 'productLine', object)
-  }[objectType]()
-}
+// // For checking user scope against object scope.
+// export const getIdFromParent = async (objectType, object) => {
+//   const organisation = await getConnection()
+//     .createQueryBuilder()
+//     .relation(objectType, 'organisation')
+//     .of(object.id)
+//     .loadOne()
+//   return organisation.id
+// }
+//
+// export const getIdFromGrandParent = async (objectType, parentType, object) => {
+//   const parent = await getConnection()
+//     .createQueryBuilder()
+//     .relation(objectType, parentType)
+//     .of(object.id)
+//     .loadOne()
+//   const organisation = await getConnection()
+//     .createQueryBuilder()
+//     .relation(parent, 'organisation')
+//     .of(object.id)
+//     .loadOne()
+//   return organisation.id
+// }
+//
+// // Data access is scoped to the owning organisation.
+// export const getOrganisationId = async (objectType, object) => {
+//   return {
+//     CatalogueItem: () => getIdFromParent(objectType, object),
+//     CostOfSale: () => getIdFromGrandParent(objectType, 'productLine', object)
+//   }[objectType]()
+// }

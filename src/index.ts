@@ -5,7 +5,7 @@ import express from 'express'
 import cors from 'cors'
 import { ApolloServer } from 'apollo-server-express'
 import { typeDefs, resolvers } from './graphql/index'
-import { checkAccessToken, generateAccessToken } from './auth/tokens'
+import { checkAccessToken } from './auth/tokens'
 import { getUserScopes } from './auth/scopes'
 import schemaDirectives from './graphql/directives/index'
 

@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm'
-import Role from './Role'
-import CatalogueItem from './CatalogueItem'
+import Role from './roles/Role'
+import CatalogueItem from './catalogue/CatalogueItem'
+import Shipment from './shipment/Shipment'
 
 @Entity()
 export default class Organisation {
@@ -18,4 +19,7 @@ export default class Organisation {
 
   @OneToMany(() => CatalogueItem, catalogueItem => catalogueItem.organisation)
   catalogueItems: CatalogueItem[]
+
+  @OneToMany(() => Shipment, shipments => shipments.organisation)
+  shipments: Shipment[]
 }

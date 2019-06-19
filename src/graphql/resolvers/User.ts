@@ -1,6 +1,6 @@
 import { getRepository } from 'typeorm'
 import { ApolloError } from 'apollo-server'
-import User from '../../entity/User'
+import User from '../../entity/roles/User'
 
 export const resolvers = {
   Query: {

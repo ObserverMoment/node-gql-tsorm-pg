@@ -1,6 +1,6 @@
 import { getRepository } from 'typeorm'
 import { ApolloError } from 'apollo-server'
-import CatalogueItem from '../../entity/CatalogueItem'
+import CatalogueItem from '../../entity/catalogue/CatalogueItem'
 
 export const resolvers = {
   Query: {

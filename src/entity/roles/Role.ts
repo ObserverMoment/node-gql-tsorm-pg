@@ -1,5 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm'
-import Organisation from './Organisation'
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm'
+import Organisation from '../Organisation'
 import User from './User'
 import RoleType from './RoleType'
 

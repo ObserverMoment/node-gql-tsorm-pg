@@ -1,2 +1,2 @@
-# directive @hasRole(requires: Role) on OBJECT | FIELD_DEFINITION
-# directive @hasScope on OBJECT | FIELD_DEFINITION
+# directive @hasScope on OBJECT
+# directive @hasPermission on FIELD_DEFINITION
