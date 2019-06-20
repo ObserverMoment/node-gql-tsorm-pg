@@ -1,12 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, ManyToOne } from 'typeorm'
+import { Entity, Column, JoinColumn, ManyToMany, ManyToOne } from 'typeorm'
+import CommonEntity from '../CommonEntity'
 import ProductLine from '../shipment/ProductLine'
 import SaleCostGroup from './SaleCostGroup'
 
 @Entity()
-export default class SaleCost {
-    @PrimaryGeneratedColumn()
-    id: number
-
+export default class SaleCost extends CommonEntity {
     @Column()
     name: string
 
@@ -19,7 +17,12 @@ export default class SaleCost {
     @ManyToMany(() => ProductLine, productLine => productLine.saleCosts)
     productLines: ProductLine[]
 
-    @ManyToOne(() => SaleCostGroup, saleCostGroup => saleCostGroup.saleCosts)
+    @ManyToOne(
+      () => SaleCostGroup,
+      saleCostGroup => saleCostGroup.saleCosts,
+      { cascade: true, onDelete: 'CASCADE' }
+    )
+    @JoinColumn()
     saleCostGroup: SaleCostGroup
     @Column()
     saleCostGroupId: number

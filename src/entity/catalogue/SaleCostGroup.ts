@@ -1,12 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm'
+import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm'
+import CommonEntity from '../CommonEntity'
 import Organisation from '../Organisation'
 import SaleCost from './SaleCost'
 
 @Entity()
-export default class SaleCostGroup {
-    @PrimaryGeneratedColumn()
-    id: number
-
+export default class SaleCostGroup extends CommonEntity {
     @Column()
     name: string
 
@@ -19,6 +17,6 @@ export default class SaleCostGroup {
     @Column({ type: 'int' })
     organisationId: number
 
-    @OneToMany(() => SaleCost, saleCost => saleCost.saleCostGroup)
+    @OneToMany(() => SaleCost, saleCost => saleCost.saleCostGroup, { cascade: true })
     saleCosts: SaleCost[]
 }

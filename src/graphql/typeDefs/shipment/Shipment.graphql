@@ -5,6 +5,7 @@ type Shipment {
   totalCbm: Float
   organisation: Organisation!
   organisationId: ID!
+  shippedOn: Date
   shipmentCosts: [ShipmentCost!]!
   productLines: [ProductLine!]!
 }
@@ -33,4 +34,5 @@ input UpdateShipmentInput {
   name: String
   notes: String
   totalCbm: Float
+  shippedOn: Date
 }

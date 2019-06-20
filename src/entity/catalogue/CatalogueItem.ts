@@ -1,13 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm'
+import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm'
+import CommonEntity from '../CommonEntity'
 import Organisation from '../Organisation'
 import Parcel from './Parcel'
 import ProductLine from '../shipment/ProductLine'
 
 @Entity()
-export default class CatalogueItem {
-    @PrimaryGeneratedColumn()
-    id: number
-
+export default class CatalogueItem extends CommonEntity {
     @Column()
     code: string
 
@@ -19,6 +17,9 @@ export default class CatalogueItem {
 
     @Column()
     packagingNotes: string
+
+    @Column({ type: 'timestamp' })
+    archivedOn: Date
 
     @ManyToOne(() => Organisation, organisation => organisation.catalogueItems)
     @JoinColumn()

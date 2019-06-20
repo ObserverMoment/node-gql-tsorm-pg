@@ -8,6 +8,7 @@ type CatalogueItem {
   organisationId: ID!
   parcels: [Parcel!]!
   productLines: [ProductLine!]!
+  archivedOn: Date
 }
 
 extend type Query {

@@ -1,12 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm'
+import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm'
+import CommonEntity from '../CommonEntity'
 import Organisation from '../Organisation'
 import ShipmentCost from './ShipmentCost'
 
 @Entity()
-export default class ShipmentCostGroup {
-    @PrimaryGeneratedColumn()
-    id: number
-
+export default class ShipmentCostGroup extends CommonEntity {
     @Column()
     name: string
 
@@ -19,6 +17,6 @@ export default class ShipmentCostGroup {
     @Column({ type: 'int' })
     organisationId: number
 
-    @OneToMany(() => ShipmentCost, shipmentCost => shipmentCost.shipmentCostGroup)
+    @OneToMany(() => ShipmentCost, shipmentCost => shipmentCost.shipmentCostGroup, { cascade: true })
     shipmentCosts: ShipmentCost[]
 }

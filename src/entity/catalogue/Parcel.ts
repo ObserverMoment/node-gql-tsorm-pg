@@ -1,11 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm'
+import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm'
+import CommonEntity from '../CommonEntity'
 import CatalogueItem from './CatalogueItem'
 
 @Entity()
-export default class Parcel {
-    @PrimaryGeneratedColumn()
-    id: number
-
+export default class Parcel extends CommonEntity {
     @Column({ type: 'float' })
     length: string // mm
 
