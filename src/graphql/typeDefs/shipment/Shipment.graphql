@@ -1,0 +1,36 @@
+type Shipment {
+  id: ID!
+  name: String!
+  notes: String
+  totalCbm: Float
+  organisation: Organisation!
+  organisationId: ID!
+  shipmentCosts: [ShipmentCost!]!
+  productLines: [ProductLine!]!
+}
+
+extend type Query {
+  shipment(id: ID!): Shipment!
+  shipments(organisationId: ID): [Shipment!]!
+}
+
+extend type Mutation {
+  createShipment(input: CreateShipmentInput!): Shipment!
+  updateShipment(id: ID!, input: UpdateCatalogueItemInput!): Shipment!
+  deleteShipment(id: ID!): Boolean!
+}
+
+input CreateShipmentInput {
+  name: String!
+  notes: String
+  totalCbm: Float
+  organisationId: ID!
+  shipmentCostIds: [ID!]
+  productLineIds: [ID!]
+}
+
+input UpdateShipmentInput {
+  name: String
+  notes: String
+  totalCbm: Float
+}

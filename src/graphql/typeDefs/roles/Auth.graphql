@@ -3,6 +3,18 @@ type LoginResponse {
   token: String!
 }
 
+enum RoleType {
+  USER
+  LEADER
+  ADMIN
+}
+
+type Role {
+  organisationId: ID!
+  userId: ID!
+  roleTypeId: ID!
+}
+
 extend type Query {
   me: User
   login(email: String!, password: String!): LoginResponse!

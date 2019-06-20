@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 't
 import CatalogueItem from './CatalogueItem'
 
 @Entity()
-export default class Packages {
+export default class Parcel {
     @PrimaryGeneratedColumn()
     id: number
 

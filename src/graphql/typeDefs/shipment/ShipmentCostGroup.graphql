@@ -1,0 +1,30 @@
+type ShipmentCostGroup {
+  id: ID!
+  name: String!
+  description: String
+  organisation: [Organisation!]!
+  organisationId: ID!
+  shipmentCosts: [ShipmentCost!]!
+}
+
+extend type Query {
+  shipmentCostGroup(id: ID!): ShipmentCostGroup!
+  shipmentCostGroups(organisationId: ID): [ShipmentCostGroup!]!
+}
+
+extend type Mutation {
+  createShipmentCostGroup(input: CreateShipmentCostGroupInput!): ShipmentCostGroup!
+  updateShipmentCostGroup(id: ID!, input: UpdateShipmentCostGroupInput!): ShipmentCostGroup!
+  deleteShipmentCostGroup(id: ID!): Boolean!
+}
+
+input CreateShipmentCostGroupInput {
+  name: String!
+  description: String
+  organisationId: ID!
+}
+
+input UpdateShipmentCostGroupInput {
+  name: String
+  description: String
+}

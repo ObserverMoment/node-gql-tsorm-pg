@@ -1,9 +1,3 @@
-enum Role {
-  ADMIN
-  LEADER
-  USER
-}
-
 type Query {
   _empty: String
 }

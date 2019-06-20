@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, ManyToMany, JoinColumn, JoinTable } from 'typeorm'
 import Organisation from '../Organisation'
 import ShipmentCost from './ShipmentCost'
 import ProductLine from './ProductLine'
@@ -9,7 +9,7 @@ export default class Shipment {
     id: number
 
     @Column()
-    Name: string
+    name: string
 
     @Column()
     notes: string
@@ -20,14 +20,13 @@ export default class Shipment {
     @ManyToOne(() => Organisation, organisation => organisation.shipments)
     @JoinColumn()
     organisation: Organisation
-    // Adding explicit id columns for relationships allows for creation of relationships via passing just an id.
-    // Saving unnecessary DB calls to retrieve actual relation object instances to then check their id.
     @Column({ type: 'int' })
     organisationId: number
 
-    @OneToMany(() => ShipmentCost, shipmentCost => shipmentCost.shipment)
-    shipmentCosts: ShipmentCost[]
-
     @OneToMany(() => ProductLine, productLine => productLine.catalogueItem)
     productLines: ProductLine[]
+
+    @ManyToMany(() => ShipmentCost, shipmentCost => shipmentCost.shipments)
+    @JoinTable({ name: 'shipment_shipment_costs' })
+    shipmentCosts: ShipmentCost[]
 }

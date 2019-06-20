@@ -1,0 +1,37 @@
+type Parcel {
+  id: ID!
+  length: Float!
+  width: Float!
+  height: Float!
+  weight: Float!
+  notes: String
+  catalogueItem: [CatalogueItem!]!
+}
+
+extend type Query {
+  parcel(id: ID!): Parcel!
+  parcels(catelogueId: ID): [Parcel!]!
+}
+
+extend type Mutation {
+  createParcel(input: CreateParcelInput!): Parcel!
+  updateParcel(id: ID!, input: UpdateParcelInput!): Parcel!
+  deleteParcel(id: ID!): Boolean!
+}
+
+input CreateParcelInput {
+  length: Float!
+  width: Float!
+  height: Float!
+  weight: Float!
+  notes: String
+  catalogueItemId: ID!
+}
+
+input UpdateParcelInput {
+  length: Int
+  width: Int
+  height: Int
+  weight: Int
+  notes: String
+}

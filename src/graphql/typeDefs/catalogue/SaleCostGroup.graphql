@@ -1,0 +1,30 @@
+type SaleCostGroup {
+  id: ID!
+  name: String!
+  description: String
+  organisation: [Organisation!]!
+  organisationId: ID!
+  saleCosts: [SaleCost!]!
+}
+
+extend type Query {
+  saleCostGroup(id: ID!): SaleCostGroup!
+  saleCostGroups(organisationId: ID): [SaleCostGroup!]!
+}
+
+extend type Mutation {
+  createSaleCostGroup(input: CreateSaleCostGroupInput!): SaleCostGroup!
+  updateSaleCostGroup(id: ID!, input: UpdateSaleCostGroupInput!): SaleCostGroup!
+  deleteSaleCostGroup(id: ID!): Boolean!
+}
+
+input CreateSaleCostGroupInput {
+  name: String!
+  description: String
+  organisationId: ID!
+}
+
+input UpdateSaleCostGroupInput {
+  name: String
+  description: String
+}

@@ -2,12 +2,15 @@ type Organisation {
   id: ID!
   name: String!
   description: String
-  users: [User]!
+  roles: [Role]!
   catalogueItems: [CatalogueItem!]!
+  shipments: [Shipment!]!
+  saleCostGroups: [SaleCostGroup!]!
+  shipmentCostGroups: [ShipmentCostGroup!]!
 }
 
 extend type Query {
-  organisation(id: ID!): Organisation!
+  organisation(id: ID): Organisation!
 }
 
 extend type Mutation {

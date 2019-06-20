@@ -1,0 +1,37 @@
+type SaleCost {
+  id: ID!
+  name: String!
+  description: String!
+  amount: Float!
+  productLines: [ProductLine!]!
+  saleCostGroup: SaleCostGroup!
+  saleCostGroupId: ID!
+}
+
+extend type Query {
+  saleCost(id: ID!): SaleCost!
+  saleCostsByProduct(productLineId: ID!): [SaleCost!]!
+  saleCostsByGroup(saleCostGroupId: ID!): [SaleCost!]!
+}
+
+extend type Mutation {
+  createSaleCost(input: CreateSaleCostInput!): SaleCost!
+  updateSaleCost(id: ID!, input: UpdateSaleCostInput!): SaleCost!
+  # assignSaleCostToGroup()
+  # assignSaleCostToProductLine()
+  deleteSaleCost(id: ID!): Boolean!
+}
+
+input CreateSaleCostInput {
+  name: String!
+  description: String!
+  amount: Float!
+  productLineId: ID
+  saleCostGroupId: ID!
+}
+
+input UpdateSaleCostInput {
+  name: String
+  description: String
+  amount: Float
+}

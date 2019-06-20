@@ -1,6 +1,7 @@
 import { getRepository } from 'typeorm'
 import { ApolloError } from 'apollo-server'
 import CatalogueItem from '../../entity/catalogue/CatalogueItem'
+import Organisation from '../../entity/Organisation'
 
 export const resolvers = {
   Query: {
@@ -50,8 +51,9 @@ export const resolvers = {
   CatalogueItem: {
     async organisation (catalogueItem, { input }, context, info) {
       try {
-        return (await getRepository(CatalogueItem)
-          .findOne(catalogueItem.id, { relations: ['orgnisation'] })).organisation
+        const orgRepo = getRepository(Organisation)
+        const organisation = await orgRepo.findOne(catalogueItem.organisationId)
+        return organisation
       } catch (err) {
         throw new ApolloError(err)
       }

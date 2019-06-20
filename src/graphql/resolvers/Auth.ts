@@ -1,4 +1,4 @@
-import { getRepository, getConnection } from 'typeorm'
+import { getRepository } from 'typeorm'
 import { AuthenticationError } from 'apollo-server'
 import scrypt from 'scrypt'
 

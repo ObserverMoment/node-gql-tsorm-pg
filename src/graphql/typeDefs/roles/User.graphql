@@ -3,12 +3,13 @@ type User {
   firstname: String!
   lastname: String!
   email: String!
-  organisation: Organisation
+  organisation: Organisation!
+  roles: [Role!]!
 }
 
 extend type Query {
   user(id: ID!): User!
-  users: [User!]!
+  users(organisationId: ID): [User!]!
 }
 
 extend type Mutation {

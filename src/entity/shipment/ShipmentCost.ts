@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, ManyToOne } from 'typeorm'
 import Shipment from './Shipment'
+import ShipmentCostGroup from './ShipmentCostGroup'
 
 @Entity()
 export default class ShipmentCost {
@@ -7,19 +8,19 @@ export default class ShipmentCost {
     id: number
 
     @Column()
-    Name: string
+    name: string
 
     @Column()
     description: string
 
-    @Column()
-    cost: number
+    @Column({ type: 'float' })
+    cost: number // Currency will be selectable in global config
 
-    @ManyToOne(() => Shipment, shipment => shipment.shipmentCosts)
-    @JoinColumn()
-    shipment: Shipment
-    // Adding explicit id columns for relationships allows for creation of relationships via passing just an id.
-    // Saving unnecessary DB calls to retrieve actual relation object instances to then check their id.
-    @Column({ type: 'int' })
-    shipmentId: number
+    @ManyToOne(() => ShipmentCostGroup, shipmentCostGroup => shipmentCostGroup.shipmentCosts)
+    shipmentCostGroup: ShipmentCostGroup
+    @Column()
+    shipmentCostGroupId: number
+
+    @ManyToMany(() => Shipment, shipment => shipment.shipmentCosts)
+    shipments: Shipment[]
 }

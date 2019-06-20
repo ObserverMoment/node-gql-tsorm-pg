@@ -1,0 +1,37 @@
+type CatalogueItem {
+  id: ID!
+  code: String!
+  title: String!
+  productNotes: String
+  packagingNotes: String
+  organisation: Organisation!
+  organisationId: ID!
+  parcels: [Parcel!]!
+  productLines: [ProductLine!]!
+}
+
+extend type Query {
+  catalogueItem(id: ID!): CatalogueItem!
+  catalogueItems(organisationId: ID): [CatalogueItem!]!
+}
+
+extend type Mutation {
+  createCatalogueItem(input: CreateCatalogueItemInput!): CatalogueItem!
+  updateCatalogueItem(id: ID!, input: UpdateCatalogueItemInput!): CatalogueItem!
+  deleteCatalogueItem(id: ID!): Boolean!
+}
+
+input CreateCatalogueItemInput {
+  code: String!
+  title: String!
+  productNotes: String
+  packagingNotes: String
+  organisationId: ID!
+}
+
+input UpdateCatalogueItemInput {
+  code: String
+  title: String
+  productNotes: String
+  packagingNotes: String
+}

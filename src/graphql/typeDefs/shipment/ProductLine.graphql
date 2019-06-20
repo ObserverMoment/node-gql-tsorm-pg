@@ -1,0 +1,31 @@
+type ProductLine {
+  id: ID!
+  quantity: Int!
+  targetMargin: Float!
+  shipment: Shipment!
+  catelogueItem: CatalogueItem!
+  saleCosts: [SaleCost!]!
+}
+
+extend type Query {
+  productLine(id: ID!): ProductLine!
+  productLines(productLineId: ID): [ProductLine!]!
+}
+
+extend type Mutation {
+  createProductLine(input: CreateProductLineInput!): ProductLine!
+  updateProductLine(id: ID!, input: UpdateProductLineInput!): ProductLine!
+  deleteProductLine(id: ID!): Boolean!
+}
+
+input CreateProductLineInput {
+  quantity: Int!
+  targetMargin: Float!
+  shipmentId: ID!
+  catelogueItemId: ID!
+}
+
+input UpdateProductLineInput {
+  quantity: Int
+  targetMargin: Float
+}

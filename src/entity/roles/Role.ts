@@ -17,13 +17,11 @@ export default class Role {
 
     @ManyToOne(() => Organisation, organisation => organisation.roles)
     organisation: Organisation
-
     @Column({ type: 'int' })
     organisationId: number
 
     @ManyToOne(() => User, user => user.roles)
     user: User
-
     @Column({ type: 'int' })
     userId: number
 }
