@@ -1,5 +1,7 @@
 type ProductLine {
   id: ID!
+  createdAt: String
+  updatedAt: String
   quantity: Int!
   targetMargin: Float!
   shipment: Shipment!

@@ -17,6 +17,6 @@ export default class ShipmentCostGroup extends CommonEntity {
     @Column({ type: 'int' })
     organisationId: number
 
-    @OneToMany(() => ShipmentCost, shipmentCost => shipmentCost.shipmentCostGroup, { cascade: true })
+    @OneToMany(() => ShipmentCost, shipmentCost => shipmentCost.shipmentCostGroup)
     shipmentCosts: ShipmentCost[]
 }

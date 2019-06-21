@@ -1,5 +1,7 @@
 type ShipmentCostGroup {
   id: ID!
+  createdAt: String
+  updatedAt: String
   name: String!
   description: String
   organisation: [Organisation!]!

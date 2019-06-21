@@ -1,5 +1,7 @@
 type Parcel {
   id: ID!
+  createdAt: String
+  updatedAt: String
   length: Float!
   width: Float!
   height: Float!

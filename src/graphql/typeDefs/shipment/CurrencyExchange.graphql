@@ -1,0 +1,29 @@
+type CurrencyExchange {
+  id: ID!
+  createdAt: String
+  updatedAt: String
+  baseAmount: String!
+  baseCurrency: String!
+  quoteCurrency: String!
+  exchangeRate: Float!
+}
+
+extend type Mutation {
+  createCurrencyExchange(input: CreateCurrencyExchangeInput!): CurrencyExchange!
+  updateCurrencyExchange(id: ID!, input: UpdateCurrencyExchangeInput!): CurrencyExchange!
+  deleteCurrencyExchange(id: ID!): Boolean!
+}
+
+input CreateCurrencyExchangeInput {
+  baseAmount: String!
+  baseCurrency: String!
+  quoteCurrency: String!
+  exchangeRate: Float!
+}
+
+input UpdateCurrencyExchangeInput {
+  baseAmount: String
+  baseCurrency: String
+  quoteCurrency: String
+  exchangeRate: Float
+}

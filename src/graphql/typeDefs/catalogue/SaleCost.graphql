@@ -1,5 +1,7 @@
 type SaleCost {
   id: ID!
+  createdAt: String
+  updatedAt: String
   name: String!
   description: String!
   amount: Float!

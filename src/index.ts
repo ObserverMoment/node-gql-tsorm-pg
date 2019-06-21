@@ -7,7 +7,7 @@ import { ApolloServer } from 'apollo-server-express'
 import { typeDefs, resolvers } from './graphql/index'
 import { checkAccessToken } from './auth/tokens'
 import { getUserScopes } from './auth/scopes'
-import schemaDirectives from './graphql/directives/index'
+// import schemaDirectives from './graphql/directives/index'
 
 createConnection().then(async connection => {
   console.log('Connected to DB')
@@ -33,8 +33,8 @@ createConnection().then(async connection => {
     context: async ({ req }) => {
       const context = await createContext(req)
       return context
-    },
-    schemaDirectives
+    }
+    // schemaDirectives
   })
 
   server.applyMiddleware({ app, path: '/api' })

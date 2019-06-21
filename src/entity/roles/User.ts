@@ -17,7 +17,7 @@ export default class User extends CommonEntity {
     password: string
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    tokenValidAfter: Date
+    tokenValidAfter: string
 
     @OneToMany(() => Role, role => role.user)
     roles: Role[]

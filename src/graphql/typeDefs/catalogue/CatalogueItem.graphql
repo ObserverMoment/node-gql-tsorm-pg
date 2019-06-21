@@ -1,5 +1,7 @@
 type CatalogueItem {
   id: ID!
+  createdAt: String
+  updatedAt: String
   code: String!
   title: String!
   productNotes: String
@@ -8,7 +10,7 @@ type CatalogueItem {
   organisationId: ID!
   parcels: [Parcel!]!
   productLines: [ProductLine!]!
-  archivedOn: Date
+  archivedOn: String
 }
 
 extend type Query {

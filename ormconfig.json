@@ -5,7 +5,7 @@
    "username": "postgres",
    "password": "postgres",
    "database": "node-gql-tsorm-1",
-   "synchronize": false,
+   "synchronize": true,
    "logging": true,
    "entities": [
       "src/entity/**/*.ts"

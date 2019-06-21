@@ -10,6 +10,9 @@ enum RoleType {
 }
 
 type Role {
+  id: ID!
+  createdAt: String
+  updatedAt: String
   organisationId: ID!
   userId: ID!
   roleTypeId: ID!

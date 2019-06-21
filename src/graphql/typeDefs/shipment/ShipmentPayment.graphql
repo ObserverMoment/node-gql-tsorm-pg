@@ -1,0 +1,37 @@
+type ShipmentPayment {
+  id: ID!
+  createdAt: String
+  updatedAt: String
+  description: String!
+  paymentMethod: String!
+  amount: Float!
+  shipment: Shipment!
+  shipmentId: ID!
+  currencyExchange: CurrencyExchange
+  currencyExchangeId: ID
+}
+
+extend type Query {
+  shipmentPayment(id: ID!): ShipmentPayment!
+  shipmentPayments(organisationId: ID): [ShipmentPayment!]!
+}
+
+extend type Mutation {
+  createShipmentPayment(input: CreateShipmentPaymentInput!): ShipmentPayment!
+  updateShipmentPayment(id: ID!, input: UpdateShipmentPaymentInput!): ShipmentPayment!
+  deleteShipmentPayment(id: ID!): Boolean!
+}
+
+input CreateShipmentPaymentInput {
+  description: String!
+  paymentMethod: String!
+  amount: Float!
+  shipmentId: ID!
+  currencyExchangeId: ID
+}
+
+input UpdateShipmentPaymentInput {
+  description: String
+  paymentMethod: String
+  amount: Float
+}
