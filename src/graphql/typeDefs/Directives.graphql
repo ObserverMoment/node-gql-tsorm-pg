@@ -1,2 +1,0 @@
-# directive @hasScope on OBJECT
-# directive @hasPermission on FIELD_DEFINITION

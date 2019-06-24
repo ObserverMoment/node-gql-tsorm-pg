@@ -16,34 +16,29 @@ export const getUserRoles = async (user) => {
   return userRoles || []
 }
 
-// // For checking user scope against object scope.
-// export const getIdFromParent = async (objectType, object) => {
+// // For checking user scope against id scope.
+// export const getIdFromParent = async (type, id) => {
 //   const organisation = await getConnection()
 //     .createQueryBuilder()
-//     .relation(objectType, 'organisation')
-//     .of(object.id)
+//     .relation(type, 'organisation')
+//     .of(id)
 //     .loadOne()
 //   return organisation.id
 // }
 //
-// export const getIdFromGrandParent = async (objectType, parentType, object) => {
+// export const getIdFromGrandParent = async (type, parentType, id) => {
 //   const parent = await getConnection()
 //     .createQueryBuilder()
-//     .relation(objectType, parentType)
-//     .of(object.id)
+//     .relation(type, parentType)
+//     .of(id)
 //     .loadOne()
-//   const organisation = await getConnection()
-//     .createQueryBuilder()
-//     .relation(parent, 'organisation')
-//     .of(object.id)
-//     .loadOne()
-//   return organisation.id
+//   return parent.organisationId
 // }
 //
 // // Data access is scoped to the owning organisation.
-// export const getOrganisationId = async (objectType, object) => {
+// export const getOrganisationId = async (type, id) => {
 //   return {
-//     CatalogueItem: () => getIdFromParent(objectType, object),
-//     CostOfSale: () => getIdFromGrandParent(objectType, 'productLine', object)
-//   }[objectType]()
+//     CatalogueItem: () => getIdFromParent(type, id),
+//     CostOfSale: () => getIdFromGrandParent(type, 'productLine', id)
+//   }[type.name]()
 // }

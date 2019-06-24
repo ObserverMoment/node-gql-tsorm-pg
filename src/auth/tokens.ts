@@ -67,6 +67,6 @@ export const checkAccessToken = async (req): Promise<User> => {
     return user
   } catch (err) {
     console.log(err)
-    return err
+    throw new AuthenticationError(err)
   }
 }

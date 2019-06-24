@@ -27,6 +27,7 @@ export const resolvers = {
   },
   Mutation: {
     async registerNewUser (root, { input }, context, info) {
+      console.log('registering')
       const { roleTypeId, organisationId, password } = input
       // TODO: Check that all the inputs are valid.
       // Otherwise throw a UserInputError

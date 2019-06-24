@@ -4,7 +4,7 @@ type Organisation {
   updatedAt: String
   name: String!
   description: String
-  roles: [Role]!
+  usersWithRoles: [UserWithRole]!
   catalogueItems: [CatalogueItem!]!
   shipments: [Shipment!]!
   saleCostGroups: [SaleCostGroup!]!

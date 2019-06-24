@@ -7,7 +7,6 @@ import { ApolloServer } from 'apollo-server-express'
 import { typeDefs, resolvers } from './graphql/index'
 import { checkAccessToken } from './auth/tokens'
 import { getUserScopes } from './auth/scopes'
-// import schemaDirectives from './graphql/directives/index'
 
 createConnection().then(async connection => {
   console.log('Connected to DB')
@@ -19,11 +18,14 @@ createConnection().then(async connection => {
     try {
       const user = await checkAccessToken(req)
       const scopes = user && await getUserScopes(user)
+      console.log({
+        user, scopes
+      })
       return {
         req, user, scopes
       }
     } catch (err) {
-      throw new Error(err)
+      console.log(err)
     }
   }
 
@@ -34,7 +36,6 @@ createConnection().then(async connection => {
       const context = await createContext(req)
       return context
     }
-    // schemaDirectives
   })
 
   server.applyMiddleware({ app, path: '/api' })
