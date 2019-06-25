@@ -60,13 +60,12 @@ export const checkAccessToken = async (req): Promise<User> => {
       throw new AuthenticationError('Access token not valid - no associated user found')
     }
     // Check that the iat on the token is not before User.tokenValidAfter date from DB - jwt.iat is time from epoch in s, not ms.
-    if (new Date(decodedPayload.iat).valueOf() <= new Date(user.tokenValidAfter).valueOf() / 1000) {
+    if (new Date(decodedPayload.iat).valueOf() * 1000 <= new Date(user.tokenValidAfter).valueOf()) {
       throw new AuthenticationError('This access token is no longer valid')
     }
 
     return user
   } catch (err) {
     console.log(err)
-    throw new AuthenticationError(err)
   }
 }

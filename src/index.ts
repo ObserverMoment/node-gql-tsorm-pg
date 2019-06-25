@@ -15,17 +15,10 @@ createConnection().then(async connection => {
   app.use(cors()) // TODO: I think this can be set on the apollo server middleware below - not in express middleware.
 
   const createContext = async (req) => {
-    try {
-      const user = await checkAccessToken(req)
-      const scopes = user && await getUserScopes(user)
-      console.log({
-        user, scopes
-      })
-      return {
-        req, user, scopes
-      }
-    } catch (err) {
-      console.log(err)
+    const user = await checkAccessToken(req)
+    const scopes = user && await getUserScopes(user)
+    return {
+      req, user, scopes
     }
   }
 

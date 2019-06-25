@@ -16,12 +16,17 @@ extend type Query {
 }
 
 extend type Mutation {
-  createOrganisation(input: OrganisationInput!): Organisation!
-  updateOrganisation(id: ID!, input: OrganisationInput!): Organisation!
+  createOrganisation(input: CreateOrganisationInput!): Organisation!
+  updateOrganisation(id: ID!, input: UpdateOrganisationInput!): Organisation!
   deleteOrganisation(id: ID!): Boolean!
 }
 
-input OrganisationInput {
+input CreateOrganisationInput {
   name: String!
+  description: String
+}
+
+input UpdateOrganisationInput {
+  name: String
   description: String
 }

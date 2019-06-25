@@ -16,7 +16,9 @@ export default class User extends CommonEntity {
     @Column({ select: false })
     password: string
 
-    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    // Add this one minute early to allow for the fact that there is latency when registering a new user.
+    // I.e. the first JWT is generated (on successful registration) very fast but the DB write takes some time!
+    @Column({ type: 'timestamp', default: () => `NOW() - INTERVAL '1 minute'` })
     tokenValidAfter: string
 
     @OneToMany(() => Role, role => role.user)
