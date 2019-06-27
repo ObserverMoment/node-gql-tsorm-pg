@@ -1,18 +1,13 @@
 import { getRepository, getConnection } from 'typeorm'
-import { AuthenticationError } from 'apollo-server'
 import Organisation from '../../entity/Organisation'
 import Role from '../../entity/roles/Role'
-import { createOrganisation, deleteOrganisation, updateEntity, deleteEntity } from '../../dataLogic/mutations'
-import { hasScope, isAdmin } from '../../auth/scopes'
+import { fetchOne } from '../../dataLogic/queries'
+import { createOrganisation, archiveOrganisation, deleteOrganisation, updateEntity } from '../../dataLogic/mutations'
 
 export const resolvers = {
   Query: {
     async organisation (root, { id }, context, info) {
-      const organisation = await getRepository(Organisation).findOne(id)
-      if (!hasScope(organisation, context.scopes)) {
-        throw new AuthenticationError('You do not have access to data from this organisation')
-      }
-      return organisation
+      return fetchOne(Organisation, id, context)
     }
   },
   Mutation: {
@@ -21,6 +16,9 @@ export const resolvers = {
     },
     async updateOrganisation (root, { id, input }, context, info) {
       return updateEntity(Organisation, id, input, context)
+    },
+    async archiveOrganisation (root, { id }, context, info) {
+      return archiveOrganisation(id, context)
     },
     async deleteOrganisation (root, { id }, context, info) {
       return deleteOrganisation(id, context)

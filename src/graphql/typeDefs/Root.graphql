@@ -4,3 +4,8 @@ type Query {
 type Mutation {
   _empty: String
 }
+
+input WhereFilterInput {
+  or: [CatalogueItemFilter!]
+  and: CatalogueItemFilter
+}

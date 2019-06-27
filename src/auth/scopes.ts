@@ -24,10 +24,19 @@ export const isAdmin = (scopes) => {
   return Object.values(scopes).includes('ADMIN')
 }
 
+export const checkScopeByOrganisationId = (organisationId, context) => {
+  const userHasScope = Object.keys(context.scopes).includes(organisationId.toString())
+  if (!userHasScope) {
+    throw new AuthenticationError('You do not have access to this data')
+  }
+  return true
+}
+
 // NOTE: context.scopes keys are currently string representations of organisation ids.
-export const findAndCheckScope = async (type, id, context) => {
+export const findOneAndCheckScope = async (type, id, context) => {
   const repo = getRepository(type)
   const entity = await repo.findOne(id)
+
   const userHasScope = hasScope(entity, context.scopes)
   if (!userHasScope) {
     throw new AuthenticationError('You do not have access to this data')

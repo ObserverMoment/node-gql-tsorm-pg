@@ -19,7 +19,7 @@ export default class CatalogueItem extends CommonEntity {
     packagingNotes: string
 
     @Column({ type: 'timestamp', nullable: true })
-    archivedOn: string
+    archivedOn: number
 
     @ManyToOne(() => Organisation, organisation => organisation.catalogueItems)
     @JoinColumn()

@@ -16,6 +16,9 @@ export default class Organisation {
   @Column()
   description: string
 
+  @Column({ type: 'timestamp', nullable: true })
+  archivedOn: number
+
   @OneToMany(() => Role, role => role.organisation)
   roles: Role[]
 

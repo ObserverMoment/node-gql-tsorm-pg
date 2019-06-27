@@ -1,27 +1,39 @@
 type CatalogueItem {
-  id: ID!
+  id: ID
   createdAt: String
   updatedAt: String
-  code: String!
-  title: String!
+  code: String
+  title: String
   productNotes: String
   packagingNotes: String
-  organisation: Organisation!
-  organisationId: ID!
-  parcels: [Parcel!]!
-  productLines: [ProductLine!]!
+  organisation: Organisation
+  organisationId: ID
+  parcels: [Parcel!]
+  productLines: [ProductLine!]
   archivedOn: String
 }
 
 extend type Query {
   catalogueItem(id: ID!): CatalogueItem!
-  catalogueItems(organisationId: ID): [CatalogueItem!]!
+  catalogueItems(organisationId: ID!, where: WhereFilterInput): [CatalogueItem!]!
 }
 
 extend type Mutation {
   createCatalogueItem(input: CreateCatalogueItemInput!): CatalogueItem!
   updateCatalogueItem(id: ID!, input: UpdateCatalogueItemInput!): CatalogueItem!
+  archiveCatalogueItem(id: ID!): Boolean!
   deleteCatalogueItem(id: ID!): Boolean!
+}
+
+input CatalogueItemFilter {
+  id: ID
+  createdAt: String
+  updatedAt: String
+  code: String
+  title: String
+  productNotes: String
+  packagingNotes: String
+  organisationId: ID
 }
 
 input CreateCatalogueItemInput {

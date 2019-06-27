@@ -1,28 +1,17 @@
-import { getRepository } from 'typeorm'
-import { ApolloError, AuthenticationError } from 'apollo-server'
 import CatalogueItem from '../../entity/catalogue/CatalogueItem'
 import Organisation from '../../entity/Organisation'
-import { createEntity, updateEntity, deleteEntity } from '../../dataLogic/mutations'
+import { fetchOne, fetchMany, setSelectFields, formatWhereFilter } from '../../dataLogic/queries'
+import { createEntity, updateEntity, archiveEntity, deleteEntity } from '../../dataLogic/mutations'
 
 export const resolvers = {
   Query: {
     async catalogueItem (root, { id }, context, info) {
-      const inScopeOrgs = Object.keys(context.scopes)
-      const catalogueItem = await getRepository(CatalogueItem).findOne(id)
-      if (!inScopeOrgs.includes(catalogueItem.organisationId.toString())) {
-        throw new AuthenticationError('You do not have access to data from this organisation')
-      }
-      return catalogueItem
+      return fetchOne(CatalogueItem, id, context)
     },
-    async catalogueItems (root, organisationId, context, info) {
-      const inScopeOrgs = Object.keys(context.scopes)
-      if (!inScopeOrgs.includes(organisationId)) {
-        throw new AuthenticationError('You do not have access to data from this organisation')
-      }
-      const catalogueItems = await getRepository(CatalogueItem).find({
-        organisationId
-      })
-      return catalogueItems
+    async catalogueItems (root, { organisationId, where = {} }, context, info) {
+      const selectObj = setSelectFields(info, ['organisationId'])
+      const whereObj = formatWhereFilter(where, { organisationId })
+      return fetchMany(CatalogueItem, organisationId, whereObj, selectObj, context)
     }
   },
   Mutation: {
@@ -32,6 +21,9 @@ export const resolvers = {
     },
     async updateCatalogueItem (root, { id, input }, context, info) {
       return updateEntity(CatalogueItem, id, input, context)
+    },
+    async archiveCatalogueItem (root, { id }, context, info) {
+      return archiveEntity(CatalogueItem, id, context)
     },
     async deleteCatalogueItem (root, { id }, context, info) {
       return deleteEntity(CatalogueItem, id, context)
