@@ -1,5 +1,5 @@
 type CatalogueItem {
-  id: ID
+  id: ID!
   createdAt: String
   updatedAt: String
   code: String
@@ -15,7 +15,7 @@ type CatalogueItem {
 
 extend type Query {
   catalogueItem(id: ID!): CatalogueItem!
-  catalogueItems(organisationId: ID!, where: WhereFilterInput): [CatalogueItem!]!
+  catalogueItems(organisationId: ID!, where: CatalogueItemWhereFilter): [CatalogueItem!]!
 }
 
 extend type Mutation {
@@ -23,6 +23,11 @@ extend type Mutation {
   updateCatalogueItem(id: ID!, input: UpdateCatalogueItemInput!): CatalogueItem!
   archiveCatalogueItem(id: ID!): Boolean!
   deleteCatalogueItem(id: ID!): Boolean!
+}
+
+input CatalogueItemWhereFilter {
+  and: CatalogueItemFilter
+  or: [CatalogueItemFilter]
 }
 
 input CatalogueItemFilter {

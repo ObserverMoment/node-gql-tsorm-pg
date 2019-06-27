@@ -1,5 +1,7 @@
-import CatalogueItem from '../../entity/catalogue/CatalogueItem'
+import { getRepository } from 'typeorm'
 import Organisation from '../../entity/Organisation'
+import CatalogueItem from '../../entity/catalogue/CatalogueItem'
+import Parcel from '../../entity/catalogue/Parcel'
 import { fetchOne, fetchMany, setSelectFields, formatWhereFilter } from '../../dataLogic/queries'
 import { createEntity, updateEntity, archiveEntity, deleteEntity } from '../../dataLogic/mutations'
 
@@ -27,6 +29,13 @@ export const resolvers = {
     },
     async deleteCatalogueItem (root, { id }, context, info) {
       return deleteEntity(CatalogueItem, id, context)
+    }
+  },
+  CatalogueItem: {
+    async parcels (catalogueItem, { input }, context, info) {
+      const selectObj = setSelectFields(info, [])
+      const parcels = await getRepository(Parcel).find({ ...selectObj, where: { catalogueItemId: catalogueItem.id } })
+      return parcels
     }
   }
 }

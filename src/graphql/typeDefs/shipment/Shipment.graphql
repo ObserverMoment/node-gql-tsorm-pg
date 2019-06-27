@@ -2,7 +2,7 @@ type Shipment {
   id: ID!
   createdAt: String
   updatedAt: String
-  name: String!
+  name: String
   notes: String
   totalCbm: Float
   organisation: Organisation!
@@ -15,13 +15,30 @@ type Shipment {
 
 extend type Query {
   shipment(id: ID!): Shipment!
-  shipments(organisationId: ID): [Shipment!]!
+  shipments(organisationId: ID!, where: ShipmentWhereFilter): [Shipment!]!
 }
 
 extend type Mutation {
   createShipment(input: CreateShipmentInput!): Shipment!
   updateShipment(id: ID!, input: UpdateShipmentInput!): Shipment!
   deleteShipment(id: ID!): Boolean!
+}
+
+input ShipmentWhereFilter {
+  and: ShipmentFilter
+  or: [ShipmentFilter]
+}
+
+input ShipmentFilter {
+  id: ID
+  createdAt: String
+  updatedAt: String
+  name: String
+  notes: String
+  totalCbm: Float
+  organisationId: ID
+  shippedOn: String
+  archivedOn: String
 }
 
 input CreateShipmentInput {

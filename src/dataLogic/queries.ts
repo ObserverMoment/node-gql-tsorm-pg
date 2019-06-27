@@ -4,7 +4,10 @@ import { findOneAndCheckScope, checkScopeByOrganisationId } from '../auth/scopes
 import Organisation from '../entity/Organisation'
 
 export const setSelectFields = (resolverFieldInfo, additionalFields: string[]) => {
-  const requestedFields = resolverFieldInfo.fieldNodes[0].selectionSet.selections.map(field => field.name.value).concat(additionalFields)
+  const requestedFields = resolverFieldInfo.fieldNodes[0].selectionSet.selections
+    .filter(field => !field.selectionSet) // Leaf nodes will not have a selectionSet - as this is for a sub object.
+    .map(field => field.name.value)
+    .concat(additionalFields)
   return { select: requestedFields }
 }
 

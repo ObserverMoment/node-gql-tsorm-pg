@@ -1,6 +1,8 @@
 import { getRepository } from 'typeorm'
 import { AuthenticationError } from 'apollo-server'
 import Role from '../entity/roles/Role'
+import CatalogueItem from '../entity/catalogue/CatalogueItem'
+import Parcel from '../entity/catalogue/Parcel'
 
 // For creating context
 export const getUserScopes = async (user) => {
@@ -50,8 +52,13 @@ export const hasScope = (object, scopes) => {
 }
 
 export const getScopingOrganisationId = (object) => {
+  const type = object.constructor.name
   return {
     Organisation: () => object.id,
-    CatalogueItem: () => object.organisationId
-  }[object.constructor.name]()
+    CatalogueItem: () => object.organisationId,
+    Parcel: async () => {
+      const catalogueItem: CatalogueItem = await getRepository(type).findOne(object.catalogueItemId) as CatalogueItem
+      return catalogueItem.organisationId
+    }
+  }[type]()
 }

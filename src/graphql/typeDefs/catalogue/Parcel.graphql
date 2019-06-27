@@ -2,17 +2,13 @@ type Parcel {
   id: ID!
   createdAt: String
   updatedAt: String
-  length: Float!
-  width: Float!
-  height: Float!
-  weight: Float!
+  length: Float
+  width: Float
+  height: Float
+  weight: Float
   notes: String
-  catalogueItem: [CatalogueItem!]!
-}
-
-extend type Query {
-  parcel(id: ID!): Parcel!
-  parcels(catelogueId: ID): [Parcel!]!
+  catalogueItemId: ID
+  catalogueItem: [CatalogueItem!]
 }
 
 extend type Mutation {
