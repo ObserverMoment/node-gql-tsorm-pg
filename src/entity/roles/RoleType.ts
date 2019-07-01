@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany } from 'typeorm'
+import {Entity, Column, OneToMany} from 'typeorm'
 import CommonEntity from '../CommonEntity'
 import Role from './Role'
 

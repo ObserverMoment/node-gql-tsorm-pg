@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, OneToMany, ManyToMany, JoinColumn, JoinTable } from 'typeorm'
+import {Entity, Column, ManyToOne, OneToMany, ManyToMany, JoinColumn, JoinTable} from 'typeorm'
 import CommonEntity from '../CommonEntity'
 import Organisation from '../Organisation'
 import ShipmentCost from './ShipmentCost'
@@ -16,16 +16,16 @@ export default class Shipment extends CommonEntity {
     @Column()
     totalCbm: number
 
-    @Column({ type: 'timestamp', nullable: true })
+    @Column({type: 'timestamp', nullable: true})
     shippedOn: string
 
-    @Column({ type: 'timestamp', nullable: true })
+    @Column({type: 'timestamp', nullable: true})
     archivedOn: string
 
     @ManyToOne(() => Organisation, organisation => organisation.shipments)
     @JoinColumn()
     organisation: Organisation
-    @Column({ type: 'int' })
+    @Column({type: 'int'})
     organisationId: number
 
     @OneToMany(() => ProductLine, productLine => productLine.shipment)
@@ -35,6 +35,6 @@ export default class Shipment extends CommonEntity {
     shipmentPayments: ShipmentPayment[]
 
     @ManyToMany(() => ShipmentCost, shipmentCost => shipmentCost.shipments)
-    @JoinTable({ name: 'shipment_shipment_costs' })
+    @JoinTable({name: 'shipment_shipment_costs'})
     shipmentCosts: ShipmentCost[]
 }

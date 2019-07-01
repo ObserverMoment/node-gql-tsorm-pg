@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm'
+import {Entity, Column, ManyToOne, OneToMany, JoinColumn} from 'typeorm'
 import CommonEntity from '../CommonEntity'
 import Organisation from '../Organisation'
 import ShipmentCost from './ShipmentCost'
@@ -14,7 +14,7 @@ export default class ShipmentCostGroup extends CommonEntity {
     @ManyToOne(() => Organisation, organisation => organisation.shipmentCostGroups)
     @JoinColumn()
     organisation: Organisation
-    @Column({ type: 'int' })
+    @Column({type: 'int'})
     organisationId: number
 
     @OneToMany(() => ShipmentCost, shipmentCost => shipmentCost.shipmentCostGroup)

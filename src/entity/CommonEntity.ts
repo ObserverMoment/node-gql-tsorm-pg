@@ -1,12 +1,12 @@
-import { CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from 'typeorm'
+import {CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn} from 'typeorm'
 
 export default class CommonEntity {
   @PrimaryGeneratedColumn()
   id: number
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({type: 'timestamp'})
   createdAt: string;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn({type: 'timestamp'})
   updatedAt: string;
 }

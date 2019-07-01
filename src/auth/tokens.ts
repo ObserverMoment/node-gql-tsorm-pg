@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
-import { getRepository } from 'typeorm'
-import { AuthenticationError } from 'apollo-server'
+import {getRepository} from 'typeorm'
+import {AuthenticationError} from 'apollo-server'
 
 import User from '../entity/roles/User'
 
@@ -28,7 +28,7 @@ export const generateAccessToken = async (userId: string | number): Promise<stri
   }
   try {
     const token = await jwt.sign(
-      { userId },
+      {userId},
       process.env.ACCESS_TOKEN_SECRET,
       signPayload
     )
@@ -57,7 +57,7 @@ export const checkAccessToken = async (req): Promise<User> => {
 
   const user = await getRepository(User)
     .createQueryBuilder('user')
-    .where('user.id = :userId', { userId: parseInt(decodedPayload.userId) })
+    .where('user.id = :userId', {userId: parseInt(decodedPayload.userId)})
     .addSelect('user.tokenValidAfter') // Required due to { select: false } option in the entity class.
     .getOne()
 

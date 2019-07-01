@@ -1,40 +1,40 @@
-import { getRepository } from 'typeorm'
+import {getRepository} from 'typeorm'
 import Organisation from '../../entity/Organisation'
 import CatalogueItem from '../../entity/catalogue/CatalogueItem'
 import Parcel from '../../entity/catalogue/Parcel'
-import { fetchOne, fetchMany, setSelectFields, formatWhereFilter } from '../../dataLogic/queries'
-import { createEntity, updateEntity, archiveEntity, deleteEntity } from '../../dataLogic/mutations'
+import {fetchOne, fetchMany, setSelectFields, formatWhereFilter} from '../../dataLogic/queries'
+import {createEntity, updateEntity, archiveEntity, deleteEntity} from '../../dataLogic/mutations'
 
 export const resolvers = {
   Query: {
-    async catalogueItem (root, { id }, context, info) {
+    async catalogueItem (root, {id}, context, info) {
       return fetchOne(CatalogueItem, id, context)
     },
-    async catalogueItems (root, { organisationId, where = {} }, context, info) {
+    async catalogueItems (root, {organisationId, where = {}}, context, info) {
       const selectObj = setSelectFields(info, ['organisationId'])
-      const whereObj = formatWhereFilter(where, { organisationId })
+      const whereObj = formatWhereFilter(where, {organisationId})
       return fetchMany(CatalogueItem, organisationId, whereObj, selectObj, context)
     }
   },
   Mutation: {
-    async createCatalogueItem (root, { input }, context, info) {
-      const { organisationId } = input
+    async createCatalogueItem (root, {input}, context, info) {
+      const {organisationId} = input
       return createEntity(CatalogueItem, Organisation, organisationId, input, context)
     },
-    async updateCatalogueItem (root, { id, input }, context, info) {
+    async updateCatalogueItem (root, {id, input}, context, info) {
       return updateEntity(CatalogueItem, id, input, context)
     },
-    async archiveCatalogueItem (root, { id }, context, info) {
+    async archiveCatalogueItem (root, {id}, context, info) {
       return archiveEntity(CatalogueItem, id, context)
     },
-    async deleteCatalogueItem (root, { id }, context, info) {
+    async deleteCatalogueItem (root, {id}, context, info) {
       return deleteEntity(CatalogueItem, id, context)
     }
   },
   CatalogueItem: {
-    async parcels (catalogueItem, { input }, context, info) {
+    async parcels (catalogueItem, {input}, context, info) {
       const selectObj = setSelectFields(info, [])
-      const parcels = await getRepository(Parcel).find({ ...selectObj, where: { catalogueItemId: catalogueItem.id } })
+      const parcels = await getRepository(Parcel).find({...selectObj, where: {catalogueItemId: catalogueItem.id}})
       return parcels
     }
   }

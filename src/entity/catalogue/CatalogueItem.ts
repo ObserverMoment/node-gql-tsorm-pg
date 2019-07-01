@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm'
+import {Entity, Column, ManyToOne, OneToMany, JoinColumn} from 'typeorm'
 import CommonEntity from '../CommonEntity'
 import Organisation from '../Organisation'
 import Parcel from './Parcel'
@@ -18,7 +18,7 @@ export default class CatalogueItem extends CommonEntity {
     @Column()
     packagingNotes: string
 
-    @Column({ type: 'timestamp', nullable: true })
+    @Column({type: 'timestamp', nullable: true})
     archivedOn: number
 
     @ManyToOne(() => Organisation, organisation => organisation.catalogueItems)
@@ -26,7 +26,7 @@ export default class CatalogueItem extends CommonEntity {
     organisation: Organisation
     // Adding explicit id columns for relationships allows for creation of relationships via passing just an id.
     // Saving unnecessary DB calls to retrieve actual relation object instances to then check their id.
-    @Column({ type: 'int' })
+    @Column({type: 'int'})
     organisationId: number
 
     @OneToMany(() => Parcel, parcel => parcel.catalogueItem)

@@ -1,4 +1,4 @@
-import { Entity, Column, OneToOne } from 'typeorm'
+import {Entity, Column, OneToOne} from 'typeorm'
 import CommonEntity from '../CommonEntity'
 import ShipmentPayment from './ShipmentPayment'
 
@@ -13,7 +13,7 @@ export default class CurrencyExchange extends CommonEntity {
     @Column()
     quoteCurrency: string
 
-    @Column({ type: 'float' })
+    @Column({type: 'float'})
     exchangeRate: number
 
     @OneToOne(() => ShipmentPayment, shipmentPayment => shipmentPayment.currencyExchange)

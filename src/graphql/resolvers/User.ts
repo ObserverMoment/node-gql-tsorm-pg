@@ -1,10 +1,10 @@
-import { getRepository } from 'typeorm'
-import { ApolloError } from 'apollo-server'
+import {getRepository} from 'typeorm'
+import {ApolloError} from 'apollo-server'
 import User from '../../entity/roles/User'
 
 export const resolvers = {
   Query: {
-    async user (root, { id }, context, info) {
+    async user (root, {id}, context, info) {
       try {
         const user = await getRepository(User).findOne(id)
         return user
@@ -22,9 +22,9 @@ export const resolvers = {
     }
   },
   Mutation: {
-    async updateUser (root, { id, input }, context, info) {
+    async updateUser (root, {id, input}, context, info) {
       try {
-        const user = await getRepository(User).update(id, { ...input })
+        const user = await getRepository(User).update(id, {...input})
         return user
       } catch (err) {
         throw new ApolloError(err)
@@ -32,10 +32,10 @@ export const resolvers = {
     }
   },
   User: {
-    async organisation (user, { input }, context, info) {
+    async organisation (user, {input}, context, info) {
       try {
         return (await getRepository(User)
-          .findOne(user.id, { relations: ['roles'] })).roles
+          .findOne(user.id, {relations: ['roles']})).roles
       } catch (err) {
         throw new ApolloError(err)
       }

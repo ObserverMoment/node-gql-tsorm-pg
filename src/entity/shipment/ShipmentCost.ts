@@ -1,4 +1,4 @@
-import { Entity, Column, JoinColumn, ManyToMany, ManyToOne } from 'typeorm'
+import {Entity, Column, JoinColumn, ManyToMany, ManyToOne} from 'typeorm'
 import CommonEntity from '../CommonEntity'
 import Shipment from './Shipment'
 import ShipmentCostGroup from './ShipmentCostGroup'
@@ -11,13 +11,13 @@ export default class ShipmentCost extends CommonEntity {
     @Column()
     description: string
 
-    @Column({ type: 'float' })
+    @Column({type: 'float'})
     cost: number // Currency will be selectable in global config
 
     @ManyToOne(
       () => ShipmentCostGroup,
       shipmentCostGroup => shipmentCostGroup.shipmentCosts,
-      { cascade: true, onDelete: 'CASCADE' }
+      {cascade: true, onDelete: 'CASCADE'}
     )
     @JoinColumn()
     shipmentCostGroup: ShipmentCostGroup

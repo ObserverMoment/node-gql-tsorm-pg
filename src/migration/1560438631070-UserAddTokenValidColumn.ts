@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
+import {MigrationInterface, QueryRunner, TableColumn} from 'typeorm'
 
 export class UserAddTokenValidColumn1560438631070 implements MigrationInterface {
   async up (queryRunner: QueryRunner): Promise<any> {

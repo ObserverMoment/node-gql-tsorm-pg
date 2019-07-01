@@ -15,6 +15,7 @@ module.exports = {
     },
     'plugins': ['@typescript-eslint'],
     'rules': {
-      'no-unused-vars': 'off'
+      'no-unused-vars': 'off',
+      'object-curly-spacing': [2,'never']
     }
 };

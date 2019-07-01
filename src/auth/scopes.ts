@@ -1,5 +1,5 @@
-import { getRepository } from 'typeorm'
-import { AuthenticationError } from 'apollo-server'
+import {getRepository} from 'typeorm'
+import {AuthenticationError} from 'apollo-server'
 import Role from '../entity/roles/Role'
 import CatalogueItem from '../entity/catalogue/CatalogueItem'
 import Parcel from '../entity/catalogue/Parcel'
@@ -10,7 +10,7 @@ export const getUserScopes = async (user) => {
     .createQueryBuilder('role')
     .innerJoinAndSelect('role.user', 'user')
     .innerJoinAndSelect('role.roleType', 'roleType')
-    .where('role.userId = :userId', { userId: user.id })
+    .where('role.userId = :userId', {userId: user.id})
     .select([
       'role.organisationId',
       'roleType.roleName'

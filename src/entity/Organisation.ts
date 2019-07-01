@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm'
+import {Entity, PrimaryGeneratedColumn, Column, OneToMany} from 'typeorm'
 import Role from './roles/Role'
 import CatalogueItem from './catalogue/CatalogueItem'
 import Shipment from './shipment/Shipment'
@@ -10,13 +10,13 @@ export default class Organisation {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({ unique: true })
+  @Column({unique: true})
   name: string
 
   @Column()
   description: string
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({type: 'timestamp', nullable: true})
   archivedOn: number
 
   @OneToMany(() => Role, role => role.organisation)
