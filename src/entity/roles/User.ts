@@ -26,6 +26,9 @@ export default class User extends CommonEntity {
     @Column({type: 'int', select: false, default: 0})
     accountLocked: number
 
+    @Column({type: 'int', default: 0})
+    twoFactorEnabled: number
+
     @OneToMany(() => Role, role => role.user)
     roles: Role[]
 

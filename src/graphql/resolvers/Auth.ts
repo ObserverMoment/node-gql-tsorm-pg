@@ -12,24 +12,45 @@ export const resolvers = {
     async me (root, args, {user, scopes}, info) {
       return user
     },
-    async login (root, {email, password}, {res}, info) {
-      const user = await getRepository(User)
-        .createQueryBuilder('user')
-        .where('user.email = :email', {email})
-        .addSelect('user.password')
-        .getOne()
+    async loginStandard (root, {email, password}, context, info) {
+      const user = loginStandard(email, password)
+      const token = await generateAccessToken(user.id, 1)
+      return {user, token}
+    },
+    async loginTwoFactor (root, {email, password, totpCode}, context, info) {
+      const user = loginTwoFactor(email, password, totpCode)
 
       if (!user) {
         throw new AuthenticationError('There is no account associated with that email address')
       }
 
-      if (scrypt.verifyKdfSync(Buffer.from(user.password, 'base64'), password)) {
-        const token = await generateAccessToken(user.id)
-        delete user.password // We don't want to serialize the password!!
-        return {user, token}
-      } else {
+      const accountLocked = user.accountLocked === 1
+
+      if (accountLocked) {
+        throw new AuthenticationError('Sorry, this account has been locked due to security reasons. Please contact customer support.')
+      }
+
+      const passwordValid = scrypt.verifyKdfSync(Buffer.from(user.password, 'base64'), password)
+
+      if (!passwordValid) {
         throw new AuthenticationError('The password entered was not correct')
       }
+
+      const twoFactorEnabled = user.twoFactorEnabled === 1
+
+      if (!twoFactorEnabled) {
+        throw new AuthenticationError('You have not enabled two factor authentication on your account')
+      }
+
+      const totpCodeValid = false // TODO.
+
+      if (!totpCodeValid) {
+        throw new AuthenticationError('The access code entered was not correct')
+      }
+
+      const token = await generateAccessToken(user.id, 2)
+      delete user.password // We don't want to serialize the password!!
+      return {user, token}
     }
   },
   Mutation: {
@@ -52,8 +73,32 @@ export const resolvers = {
 
       return {
         user: savedUser,
-        token: savedUser && savedRole && await generateAccessToken(savedUser.id)
+        token: savedUser && savedRole && await generateAccessToken(savedUser.id, 1)
       }
+    },
+    async enableTwoFactor (root, {email, password}, context, info) {
+      const user = await getRepository(User)
+        .createQueryBuilder('user')
+        .where('user.email = :email', {email})
+        .addSelect('user.password')
+        .addSelect('user.accountLocked')
+        .getOne()
+
+      if (!user) {
+        throw new AuthenticationError('There is no account associated with that email address')
+      }
+
+      const passwordValid = scrypt.verifyKdfSync(Buffer.from(user.password, 'base64'), password)
+      const twoFactorEnabled = user.twoFactorEnabled === 1
+
+      if (!passwordValid) {
+        throw new AuthenticationError('The password entered was not correct')
+      }
+
+      if (!twoFactorEnabled) {
+        throw new AuthenticationError('You have not enabled two factor authentication on your account')
+      }
+      return true
     }
   }
 }

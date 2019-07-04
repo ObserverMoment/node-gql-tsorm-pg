@@ -19,24 +19,25 @@ interface SignPayload {
   expiresIn: string
 }
 
-export const generateAccessToken = async (userId: string | number): Promise<string> => {
+const expiresInMapping = {
+  1: process.env.FACTOR1_TOKEN_EXPIRY,
+  2: process.env.FACTOR2_TOKEN_EXPIRY
+}
+
+// @param {number} level - Level 1 is password, level 2 is authenticator.
+export const generateAccessToken = async (userId: string | number, level: number): Promise<string> => {
   const signPayload: SignPayload = {
     issuer: process.env.ACCESS_TOKEN_ISSUER,
     subject: userId.toString(),
     audience: process.env.ACCESS_TOKEN_AUDIENCE,
-    expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+    expiresIn: expiresInMapping[level]
   }
-  try {
-    const token = await jwt.sign(
-      {userId},
-      process.env.ACCESS_TOKEN_SECRET,
-      signPayload
-    )
-    return token
-  } catch (err) {
-    console.log(err)
-    throw Error('There was a problem generating the JWT access token')
-  }
+  const token = await jwt.sign(
+    {userId, level},
+    process.env.ACCESS_TOKEN_SECRET,
+    signPayload
+  )
+  return token
 }
 
 export const checkAccessToken = async (req): Promise<User> => {
