@@ -2,54 +2,54 @@ import User from '../entity/roles/User'
 import {getRepository} from 'typeorm'
 import {AuthenticationError} from 'apollo-server'
 import scrypt from 'scrypt'
+import {generateAccessToken} from '../auth/tokens'
 
-export const getUserForAuth = async (email) => {
+// .addSelect() gets fields that are not serialisec by default - and are used for auth only.
+export const getUserForAuthByEmail = async (email) => {
   const userForAuth = await getRepository(User)
     .createQueryBuilder('user')
     .where('user.email = :email', {email})
     .addSelect('user.password')
     .addSelect('user.accountLocked')
+    .addSelect('user.twoFactorEnabled')
     .getOne()
+  if (!userForAuth) {
+    throw new AuthenticationError(`Could not find a user under email: ${email}`)
+  }
   return userForAuth
 }
 
-export const loginStandard = async (email, password) => {
-  const user = await getUserForAuth(email)
-  if (!user) {
-    throw new AuthenticationError('There is no account associated with that email address')
+export const getUserForAuthById = async (id) => {
+  const userForAuth = await getRepository(User)
+    .createQueryBuilder('user')
+    .where('user.id = :id', {id})
+    .addSelect('user.password')
+    .addSelect('user.accountLocked')
+    .addSelect('user.twoFactorEnabled')
+    .getOne()
+  if (!userForAuth) {
+    throw new AuthenticationError(`Could not find a user under id: ${id}`)
   }
-  const accountLocked = user.accountLocked !== 0
-  if (accountLocked) {
-    throw new AuthenticationError('Sorry, this account has been locked due to security reasons. Please contact customer support.')
-  }
-  const twoFactorEnabled = user.twoFactorEnabled === 1
-  if (twoFactorEnabled) {
-    throw new AuthenticationError('Two factor authentication is enabled, standard authentication will not work')
-  }
-  const passwordValid = scrypt.verifyKdfSync(Buffer.from(user.password, 'base64'), password)
-  if (!passwordValid) {
-    throw new AuthenticationError('The password entered was not correct')
-  }
-  delete user.password // We don't want to serialize the password!
-  delete user.accountLocked // We don't want to serialize accountLocked!
-  return user
+  return userForAuth
 }
 
-export const loginTwoFactor = async (email, password, totpCode) => {
-  const user = await getUserForAuth(email)
+export const checkPassword = (password, passwordHash) => scrypt.verifyKdfSync(Buffer.from(passwordHash, 'base64'), password)
+
+export const loginSingleFactor = async (email, password) => {
+  const user = await getUserForAuthByEmail(email)
   if (!user) {
     throw new AuthenticationError('There is no account associated with that email address')
   }
-  const accountLocked = user.accountLocked !== 0
-  if (accountLocked) {
-    throw new AuthenticationError('Sorry, this account has been locked due to security reasons. Please contact customer support.')
+  if (user.accountLocked) {
+    throw new AuthenticationError('Sorry, this account has been locked due to security reasons. Please contact support.')
   }
-  const passwordValid = scrypt.verifyKdfSync(Buffer.from(user.password, 'base64'), password)
+  const passwordValid = checkPassword(password, user.password)
   if (!passwordValid) {
     throw new AuthenticationError('The password entered was not correct')
   }
-  const twoFactorEnabled = user.twoFactorEnabled === 1
-  if (!twoFactorEnabled) {
-    throw new AuthenticationError('You have not enabled two factor authentication on your account')
-  }
+
+  // All checks passed. Make a token. The type: 'grant' claim on the token will cause the client to redirect the user to 2FA login screen.
+  const type = user.twoFactorEnabled ? 'grant' : 'access'
+  const token = await generateAccessToken(user.id, 1, type) // 1 here is the access 'level' - i.e. single factor authed only.
+  return token
 }

@@ -1,8 +1,6 @@
-import {Entity, Column, OneToMany, OneToOne} from 'typeorm'
+import {Entity, Column, OneToMany} from 'typeorm'
 import CommonEntity from '../CommonEntity'
 import Role from './Role'
-import UserAccessCode from './UserAccessCode'
-import UserResetToken from './UserResetToken'
 
 @Entity()
 export default class User extends CommonEntity {
@@ -15,6 +13,9 @@ export default class User extends CommonEntity {
     @Column({unique: true})
     email: string
 
+    @Column({type: 'boolean', select: false, default: false})
+    emailConfirmed: boolean
+
     @Column({select: false})
     password: string
 
@@ -23,18 +24,18 @@ export default class User extends CommonEntity {
     @Column({type: 'timestamp', select: false, default: () => `NOW() - INTERVAL '1 minute'`})
     tokenValidAfter: string
 
-    @Column({type: 'int', select: false, default: 0})
-    accountLocked: number
+    @Column({type: 'boolean', select: false, default: false})
+    accountLocked: boolean
 
-    @Column({type: 'int', default: 0})
-    twoFactorEnabled: number
+    @Column({type: 'boolean', select: false, default: false})
+    twoFactorEnabled: boolean
+
+    @Column({select: false, nullable: true})
+    otpk: string
+
+    @Column({type: 'boolean', select: false, default: false})
+    smsNumberEnabled: boolean
 
     @OneToMany(() => Role, role => role.user)
     roles: Role[]
-
-    @OneToOne(() => UserAccessCode, userAccessCode => userAccessCode.user)
-    userAccessCode: UserAccessCode
-
-    @OneToOne(() => UserResetToken, userResetToken => userResetToken.user)
-    userResetToken: UserResetToken
 }

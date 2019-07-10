@@ -4,12 +4,12 @@ import Role from '../entity/roles/Role'
 import CatalogueItem from '../entity/catalogue/CatalogueItem'
 
 // For creating context
-export const getUserScopes = async (user) => {
+export const getUserScopes = async (userId) => {
   const roles = await getRepository(Role)
     .createQueryBuilder('role')
     .innerJoinAndSelect('role.user', 'user')
     .innerJoinAndSelect('role.roleType', 'roleType')
-    .where('role.userId = :userId', {userId: user.id})
+    .where('role.userId = :userId', {userId: userId})
     .select([
       'role.organisationId',
       'roleType.roleName'

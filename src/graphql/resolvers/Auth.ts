@@ -1,56 +1,26 @@
 import {getRepository} from 'typeorm'
-import {AuthenticationError} from 'apollo-server'
 import scrypt from 'scrypt'
-
+import otplib from 'otplib'
+import crypto from 'crypto'
+import qr from 'qrcode'
 import User from '../../entity/roles/User'
 import Role from '../../entity/roles/Role'
 
 import {generateAccessToken} from '../../auth/tokens'
+import {loginSingleFactor} from '../../dataLogic/auth'
 
 export const resolvers = {
   Query: {
-    async me (root, args, {user, scopes}, info) {
+    async me (root, args, {userId}, info) {
+      const user = getRepository(User).findOne(userId)
       return user
     },
-    async loginStandard (root, {email, password}, context, info) {
-      const user = loginStandard(email, password)
-      const token = await generateAccessToken(user.id, 1)
-      return {user, token}
+    async loginSingleFactor (root, {email, password}, context, info) {
+      const token = await loginSingleFactor(email, password)
+      return token
     },
-    async loginTwoFactor (root, {email, password, totpCode}, context, info) {
-      const user = loginTwoFactor(email, password, totpCode)
-
-      if (!user) {
-        throw new AuthenticationError('There is no account associated with that email address')
-      }
-
-      const accountLocked = user.accountLocked === 1
-
-      if (accountLocked) {
-        throw new AuthenticationError('Sorry, this account has been locked due to security reasons. Please contact customer support.')
-      }
-
-      const passwordValid = scrypt.verifyKdfSync(Buffer.from(user.password, 'base64'), password)
-
-      if (!passwordValid) {
-        throw new AuthenticationError('The password entered was not correct')
-      }
-
-      const twoFactorEnabled = user.twoFactorEnabled === 1
-
-      if (!twoFactorEnabled) {
-        throw new AuthenticationError('You have not enabled two factor authentication on your account')
-      }
-
-      const totpCodeValid = false // TODO.
-
-      if (!totpCodeValid) {
-        throw new AuthenticationError('The access code entered was not correct')
-      }
-
-      const token = await generateAccessToken(user.id, 2)
-      delete user.password // We don't want to serialize the password!!
-      return {user, token}
+    async loginTwoFactor (root, {code}, context, info) {
+      return true
     }
   },
   Mutation: {
@@ -73,32 +43,33 @@ export const resolvers = {
 
       return {
         user: savedUser,
-        token: savedUser && savedRole && await generateAccessToken(savedUser.id, 1)
+        token: savedUser && savedRole && await generateAccessToken(savedUser.id, 1, 'access')
       }
     },
-    async enableTwoFactor (root, {email, password}, context, info) {
-      const user = await getRepository(User)
-        .createQueryBuilder('user')
-        .where('user.email = :email', {email})
-        .addSelect('user.password')
-        .addSelect('user.accountLocked')
-        .getOne()
+    async enrolTwoFactor (root, {password}, {userId}, info) {
+      const userRepo = getRepository(User)
+      const user = await userRepo.findOne(userId)
 
-      if (!user) {
-        throw new AuthenticationError('There is no account associated with that email address')
+      // Generate secret.
+      const secret = otplib.authenticator.generateSecret() // base 32 encoded hex secret key.
+
+      // Encrypt it and save to user.otpk as 'iv.encrypted'
+      const iv = crypto.randomBytes(16)
+      const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(process.env.CRYPT_SECRET_2FA), iv)
+      const encryptedKey = cipher.update(secret)
+      const updateUser = {
+        ...user,
+        twoFactorEnabled: true,
+        otpk: `${iv}.${encryptedKey}`
       }
-
-      const passwordValid = scrypt.verifyKdfSync(Buffer.from(user.password, 'base64'), password)
-      const twoFactorEnabled = user.twoFactorEnabled === 1
-
-      if (!passwordValid) {
-        throw new AuthenticationError('The password entered was not correct')
-      }
-
-      if (!twoFactorEnabled) {
-        throw new AuthenticationError('You have not enabled two factor authentication on your account')
-      }
-      return true
+      const savedUser = await userRepo.save(updateUser)
+      const otpauth = otplib.authenticator.keyuri(savedUser.email, 'Procure.it', secret) // user, service, secret to pass to auth app.
+      qr.toDataURL(otpauth, (err, imageUrl) => {
+        if (err) {
+          throw Error('There was an issue creating your QR code')
+        }
+        return imageUrl
+      })
     }
   }
 }
