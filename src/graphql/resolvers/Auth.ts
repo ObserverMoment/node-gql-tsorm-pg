@@ -1,26 +1,36 @@
 import {getRepository} from 'typeorm'
+import {AuthenticationError} from 'apollo-server'
 import scrypt from 'scrypt'
 import otplib from 'otplib'
-import crypto from 'crypto'
 import qr from 'qrcode'
 import User from '../../entity/roles/User'
 import Role from '../../entity/roles/Role'
 
 import {generateAccessToken} from '../../auth/tokens'
-import {loginSingleFactor} from '../../dataLogic/auth'
+import {loginSingleFactor, loginTwoFactor} from '../../dataLogic/auth'
+import {encrypt} from '../../dataLogic/crypto'
 
 export const resolvers = {
   Query: {
     async me (root, args, {userId}, info) {
-      const user = getRepository(User).findOne(userId)
+      const user = await getRepository(User).findOne(userId)
+      if (!user) {
+        throw new AuthenticationError(`Could not find a user with id: ${userId}.`)
+      }
       return user
     },
     async loginSingleFactor (root, {email, password}, context, info) {
       const token = await loginSingleFactor(email, password)
       return token
     },
-    async loginTwoFactor (root, {code}, context, info) {
-      return true
+    async loginTwoFactor (root, {code}, {userId, tokenInfo}, info) {
+      const {level, type} = tokenInfo
+      if (level === 2 && type === 'grant') {
+        const token = await loginTwoFactor(userId, code)
+        return token
+      } else {
+        throw new AuthenticationError('You are not authorised to access Two Factor Login, please go through password authentication first.')
+      }
     }
   },
   Mutation: {
@@ -39,12 +49,10 @@ export const resolvers = {
       // Relation: Create the role.
       const roleRepo = getRepository(Role)
       const newRole = roleRepo.create({userId: savedUser.id, roleTypeId, organisationId})
-      const savedRole = await roleRepo.save(newRole)
+      await roleRepo.save(newRole)
 
-      return {
-        user: savedUser,
-        token: savedUser && savedRole && await generateAccessToken(savedUser.id, 1, 'access')
-      }
+      const token = await generateAccessToken(savedUser.id, 1, 'access')
+      return token
     },
     async enrolTwoFactor (root, {password}, {userId}, info) {
       const userRepo = getRepository(User)
@@ -53,17 +61,18 @@ export const resolvers = {
       // Generate secret.
       const secret = otplib.authenticator.generateSecret() // base 32 encoded hex secret key.
 
-      // Encrypt it and save to user.otpk as 'iv.encrypted'
-      const iv = crypto.randomBytes(16)
-      const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(process.env.CRYPT_SECRET_2FA), iv)
-      const encryptedKey = cipher.update(secret)
+      // Encrypt it and save to user.otpk as string 'iv.encrypted'
+      const encryptedOtpk = encrypt(secret, process.env.CRYPTO_SECRET_2FA, 16, 'aes-256-gcm', 'hex')
+
       const updateUser = {
         ...user,
         twoFactorEnabled: true,
-        otpk: `${iv}.${encryptedKey}`
+        otpk: encryptedOtpk
       }
       const savedUser = await userRepo.save(updateUser)
-      const otpauth = otplib.authenticator.keyuri(savedUser.email, 'Procure.it', secret) // user, service, secret to pass to auth app.
+
+      // Generate QR code.
+      const otpauth = otplib.authenticator.keyuri(savedUser.email, 'Procure.it', secret) // user, service, secret to pass to device auth app.
       qr.toDataURL(otpauth, (err, imageUrl) => {
         if (err) {
           throw Error('There was an issue creating your QR code')
