@@ -1,35 +1,26 @@
 import {getRepository} from 'typeorm'
-import {AuthenticationError} from 'apollo-server'
 import scrypt from 'scrypt'
-
+import otplib from 'otplib'
+import crypto from 'crypto'
+import qr from 'qrcode'
 import User from '../../entity/roles/User'
 import Role from '../../entity/roles/Role'
 
 import {generateAccessToken} from '../../auth/tokens'
+import {loginSingleFactor} from '../../dataLogic/auth'
 
 export const resolvers = {
   Query: {
-    async me (root, args, {user, scopes}, info) {
+    async me (root, args, {userId}, info) {
+      const user = getRepository(User).findOne(userId)
       return user
     },
-    async login (root, {email, password}, {res}, info) {
-      const user = await getRepository(User)
-        .createQueryBuilder('user')
-        .where('user.email = :email', {email})
-        .addSelect('user.password')
-        .getOne()
-
-      if (!user) {
-        throw new AuthenticationError('There is no account associated with that email address')
-      }
-
-      if (scrypt.verifyKdfSync(Buffer.from(user.password, 'base64'), password)) {
-        const token = await generateAccessToken(user.id)
-        delete user.password // We don't want to serialize the password!!
-        return {user, token}
-      } else {
-        throw new AuthenticationError('The password entered was not correct')
-      }
+    async loginSingleFactor (root, {email, password}, context, info) {
+      const token = await loginSingleFactor(email, password)
+      return token
+    },
+    async loginTwoFactor (root, {code}, context, info) {
+      return true
     }
   },
   Mutation: {
@@ -52,8 +43,33 @@ export const resolvers = {
 
       return {
         user: savedUser,
-        token: savedUser && savedRole && await generateAccessToken(savedUser.id)
+        token: savedUser && savedRole && await generateAccessToken(savedUser.id, 1, 'access')
       }
+    },
+    async enrolTwoFactor (root, {password}, {userId}, info) {
+      const userRepo = getRepository(User)
+      const user = await userRepo.findOne(userId)
+
+      // Generate secret.
+      const secret = otplib.authenticator.generateSecret() // base 32 encoded hex secret key.
+
+      // Encrypt it and save to user.otpk as 'iv.encrypted'
+      const iv = crypto.randomBytes(16)
+      const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(process.env.CRYPT_SECRET_2FA), iv)
+      const encryptedKey = cipher.update(secret)
+      const updateUser = {
+        ...user,
+        twoFactorEnabled: true,
+        otpk: `${iv}.${encryptedKey}`
+      }
+      const savedUser = await userRepo.save(updateUser)
+      const otpauth = otplib.authenticator.keyuri(savedUser.email, 'Procure.it', secret) // user, service, secret to pass to auth app.
+      qr.toDataURL(otpauth, (err, imageUrl) => {
+        if (err) {
+          throw Error('There was an issue creating your QR code')
+        }
+        return imageUrl
+      })
     }
   }
 }

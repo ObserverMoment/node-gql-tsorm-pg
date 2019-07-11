@@ -2,15 +2,14 @@ import {getRepository} from 'typeorm'
 import {AuthenticationError} from 'apollo-server'
 import Role from '../entity/roles/Role'
 import CatalogueItem from '../entity/catalogue/CatalogueItem'
-import Parcel from '../entity/catalogue/Parcel'
 
 // For creating context
-export const getUserScopes = async (user) => {
+export const getUserScopes = async (userId) => {
   const roles = await getRepository(Role)
     .createQueryBuilder('role')
     .innerJoinAndSelect('role.user', 'user')
     .innerJoinAndSelect('role.roleType', 'roleType')
-    .where('role.userId = :userId', {userId: user.id})
+    .where('role.userId = :userId', {userId: userId})
     .select([
       'role.organisationId',
       'roleType.roleName'
@@ -53,12 +52,18 @@ export const hasScope = (object, scopes) => {
 
 export const getScopingOrganisationId = (object) => {
   const type = object.constructor.name
-  return {
-    Organisation: () => object.id,
-    CatalogueItem: () => object.organisationId,
-    Parcel: async () => {
-      const catalogueItem: CatalogueItem = await getRepository(type).findOne(object.catalogueItemId) as CatalogueItem
-      return catalogueItem.organisationId
-    }
-  }[type]()
+  if (!retrieveOrgIdMap.hasOwnProperty(type)) {
+    throw new Error(`Type '${type}' not recognised by mapping 'retrieveOrgIdMap' when searching for '${object}'`)
+  }
+  return retrieveOrgIdMap[type || 'default'](type, object)
+}
+
+export const retrieveOrgIdMap = {
+  Organisation: (type, obj) => obj.id,
+  CatalogueItem: (type, obj) => obj.organisationId,
+  Parcel: async (type, obj) => {
+    const catalogueItem: CatalogueItem = await getRepository(type).findOne(obj.catalogueItemId) as CatalogueItem
+    return catalogueItem.organisationId
+  },
+  default: (type, obj) => { throw new Error(`Type '${type}' not provided. Cannot use 'retrieveOrgIdMap' to get scoping organisation ID`) }
 }
