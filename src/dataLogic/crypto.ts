@@ -1,18 +1,19 @@
 import crypto from 'crypto'
 
-export const encrypt = (toEncrypt, encryptionKey, ivBytes, algo, encoding) => {
-  const iv = crypto.randomBytes(ivBytes)
-  const cipher = crypto.createCipheriv(algo, Buffer.from(encryptionKey), iv)
-  let encryptedKey = cipher.update(toEncrypt)
-  encryptedKey = Buffer.concat([encryptedKey, cipher.final()])
-  return `${iv.toString(encoding)}.${encryptedKey.toString(encoding)}`
+// Encoding = hex, utf8, binary etc.
+export const encrypt = (toEncrypt, encryptionKey, numIVBytes, algo, encoding) => {
+  const iv = crypto.randomBytes(numIVBytes)
+  const cipher = crypto.createCipheriv(algo, Buffer.from(encryptionKey, encoding), iv)
+  let encrypted = cipher.update(toEncrypt)
+  encrypted = Buffer.concat([encrypted, cipher.final()])
+  return `${iv.toString(encoding)}.${encrypted.toString(encoding)}`
 }
 
-// Returns the key as a string
-export const decrypt = (encrypted, iv, encoding, algo) => {
-  const ivDecoded = Buffer.from(iv, encoding)
-  const encryptedKeyDecoded = Buffer.from(encrypted, encoding)
-  const decipher = crypto.createDecipheriv(algo, Buffer.from(process.env.CRYPTO_SECRET_2FA), ivDecoded)
-  const decrypted = decipher.update(encryptedKeyDecoded)
-  return Buffer.concat([decrypted, decipher.final()]).toString()
+export const decrypt = (toDecrypt, decryptionKey, iv, algo, encoding) => {
+  const ivBuffer = Buffer.from(iv, encoding)
+  const toDecryptBuffer = Buffer.from(toDecrypt, encoding)
+  const decipher = crypto.createDecipheriv(algo, Buffer.from(decryptionKey), ivBuffer)
+  let decrypted = decipher.update(toDecryptBuffer)
+  decrypted = Buffer.concat([decrypted, decipher.final()])
+  return decrypted.toString()
 }

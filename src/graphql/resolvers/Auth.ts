@@ -1,14 +1,11 @@
 import {getRepository} from 'typeorm'
 import {AuthenticationError} from 'apollo-server'
 import scrypt from 'scrypt'
-import otplib from 'otplib'
-import qr from 'qrcode'
 import User from '../../entity/roles/User'
 import Role from '../../entity/roles/Role'
 
 import {generateAccessToken} from '../../auth/tokens'
-import {loginSingleFactor, loginTwoFactor} from '../../dataLogic/auth'
-import {encrypt} from '../../dataLogic/crypto'
+import {loginSingleFactor, enrolTwoFactor, loginTwoFactor} from '../../dataLogic/auth'
 
 export const resolvers = {
   Query: {
@@ -55,30 +52,8 @@ export const resolvers = {
       return token
     },
     async enrolTwoFactor (root, {password}, {userId}, info) {
-      const userRepo = getRepository(User)
-      const user = await userRepo.findOne(userId)
-
-      // Generate secret.
-      const secret = otplib.authenticator.generateSecret() // base 32 encoded hex secret key.
-
-      // Encrypt it and save to user.otpk as string 'iv.encrypted'
-      const encryptedOtpk = encrypt(secret, process.env.CRYPTO_SECRET_2FA, 16, 'aes-256-gcm', 'hex')
-
-      const updateUser = {
-        ...user,
-        twoFactorEnabled: true,
-        otpk: encryptedOtpk
-      }
-      const savedUser = await userRepo.save(updateUser)
-
-      // Generate QR code.
-      const otpauth = otplib.authenticator.keyuri(savedUser.email, 'Procure.it', secret) // user, service, secret to pass to device auth app.
-      qr.toDataURL(otpauth, (err, imageUrl) => {
-        if (err) {
-          throw Error('There was an issue creating your QR code')
-        }
-        return imageUrl
-      })
+      const tokenAndDataURL = await enrolTwoFactor(userId, password)
+      return tokenAndDataURL
     }
   }
 }

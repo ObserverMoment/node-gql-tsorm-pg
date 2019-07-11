@@ -13,15 +13,20 @@ type Role {
   roleTypeId: ID!
 }
 
+type loginTwoFactorResponse {
+  token: String!
+  dataURL: String!
+}
+
 extend type Query {
   me: User
   loginSingleFactor(email: String!, password: String!): String!
-  loginTwoFactor(code: String!): String!
+  loginTwoFactor(code: Int!): String!
 }
 
 extend type Mutation {
   registerNewUser(input: RegisterUserInput!): String!
-  enrolTwoFactor(password: String!): String!
+  enrolTwoFactor(password: String!): loginTwoFactorResponse!
 }
 
 input RegisterUserInput {

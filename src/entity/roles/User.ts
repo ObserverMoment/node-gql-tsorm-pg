@@ -16,7 +16,7 @@ export default class User extends CommonEntity {
     @Column({type: 'boolean', select: false, default: false})
     emailConfirmed: boolean
 
-    @Column({select: false})
+    @Column({unique: true, select: false})
     password: string
 
     // Add this one minute early to allow for the fact that there is latency when registering a new user.
@@ -32,9 +32,6 @@ export default class User extends CommonEntity {
 
     @Column({select: false, nullable: true})
     otpk: string
-
-    @Column({type: 'boolean', select: false, default: false})
-    smsNumberEnabled: boolean
 
     @OneToMany(() => Role, role => role.user)
     roles: Role[]
