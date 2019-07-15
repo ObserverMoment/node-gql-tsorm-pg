@@ -4,6 +4,7 @@ import Organisation from '../Organisation'
 import ShipmentCost from './ShipmentCost'
 import ProductLine from './ProductLine'
 import ShipmentPayment from './ShipmentPayment'
+import ShipmentDiscount from './ShipmentDiscount'
 
 @Entity()
 export default class Shipment extends CommonEntity {
@@ -37,4 +38,7 @@ export default class Shipment extends CommonEntity {
     @ManyToMany(() => ShipmentCost, shipmentCost => shipmentCost.shipments)
     @JoinTable({name: 'shipment_shipment_costs'})
     shipmentCosts: ShipmentCost[]
+
+    @OneToMany(() => ShipmentDiscount, shipmentDiscount => shipmentDiscount.shipment)
+    shipmentDiscounts: ShipmentDiscount[]
 }

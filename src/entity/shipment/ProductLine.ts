@@ -1,8 +1,7 @@
-import {Entity, JoinColumn, Column, ManyToOne, ManyToMany, JoinTable} from 'typeorm'
+import {Entity, JoinColumn, Column, ManyToOne} from 'typeorm'
 import CommonEntity from '../CommonEntity'
 import CatalogueItem from '../catalogue/CatalogueItem'
 import Shipment from './Shipment'
-import SaleCost from '../catalogue/SaleCost'
 
 @Entity()
 export default class ProductLine extends CommonEntity {
@@ -27,8 +26,4 @@ export default class ProductLine extends CommonEntity {
     shipment: Shipment
     @Column({type: 'int'})
     shipmentId: number
-
-    @ManyToMany(() => SaleCost, saleCost => saleCost.productLines)
-    @JoinTable({name: 'product_line_sale_costs'})
-    saleCosts: SaleCost[]
 }
