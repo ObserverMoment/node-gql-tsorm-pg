@@ -27,7 +27,7 @@ createConnection().then(async connection => {
 
   const server = new ApolloServer({
     typeDefs,
-    resolvers,
+    resolvers: resolvers as any,
     context: async ({req}) => {
       const context = await createContext(req)
       return context

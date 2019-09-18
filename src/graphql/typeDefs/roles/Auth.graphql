@@ -20,12 +20,12 @@ type loginTwoFactorResponse {
 
 extend type Query {
   me: User
-  loginSingleFactor(email: String!, password: String!): String!
-  loginTwoFactor(code: Int!): String!
 }
 
 extend type Mutation {
   registerNewUser(input: RegisterUserInput!): String!
+  loginSingleFactor(email: String!, password: String!): String!
+  loginTwoFactor(code: Int!): String!
   enrolTwoFactor(password: String!): loginTwoFactorResponse!
 }
 

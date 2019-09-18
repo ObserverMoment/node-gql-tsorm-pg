@@ -15,19 +15,6 @@ export const resolvers = {
         throw new AuthenticationError(`Could not find a user with id: ${userId}.`)
       }
       return user
-    },
-    async loginSingleFactor (root, {email, password}, context, info) {
-      const token = await loginSingleFactor(email, password)
-      return token
-    },
-    async loginTwoFactor (root, {code}, {userId, tokenInfo}, info) {
-      const {level, type} = tokenInfo
-      if (level === 2 && type === 'grant') {
-        const token = await loginTwoFactor(userId, code)
-        return token
-      } else {
-        throw new AuthenticationError('You are not authorised to access Two Factor Login, please go through password authentication first.')
-      }
     }
   },
   Mutation: {
@@ -50,6 +37,20 @@ export const resolvers = {
 
       const token = await generateAccessToken(savedUser.id, 1, 'access')
       return token
+    },
+    async loginSingleFactor (root, {email, password}, context, info) {
+      console.log('in resolver loginSingleFactor')
+      const token = await loginSingleFactor(email, password)
+      return token
+    },
+    async loginTwoFactor (root, {code}, {userId, tokenInfo}, info) {
+      const {level, type} = tokenInfo
+      if (level === 2 && type === 'grant') {
+        const token = await loginTwoFactor(userId, code)
+        return token
+      } else {
+        throw new AuthenticationError('You are not authorised to access Two Factor Login, please go through password authentication first.')
+      }
     },
     async enrolTwoFactor (root, {password}, {userId}, info) {
       const tokenAndDataURL = await enrolTwoFactor(userId, password)
