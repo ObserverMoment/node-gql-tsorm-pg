@@ -47,7 +47,7 @@ export const loginSingleFactor = async (email, password) => {
 
   const passwordValid = checkPassword(password, user.password)
   if (!passwordValid) {
-    throw new AuthenticationError('The password entered was not correct.')
+    throw new AuthenticationError('Sorry, the email and password combination was not correct.')
   }
 
   // All checks passed. Make a token. The type: 'grant' claim on the token will cause the client to redirect the user to 2FA login screen.

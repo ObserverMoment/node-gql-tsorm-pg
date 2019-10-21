@@ -47,14 +47,15 @@ interface VerifiedPayload {
   type?: string
 }
 
-interface userAndTokenInfo {
+interface UserAndTokenInfo {
   userId: number,
   tokenInfo: VerifiedPayload
 }
 
-export const checkAccessToken = async (req): Promise<userAndTokenInfo> => {
+export const checkAccessToken = async (req): Promise<UserAndTokenInfo> => {
   try {
     const authHeader: string = req.headers['authorization'] as string
+    console.log('authHeader', authHeader)
     if (!authHeader) {
       return null
     }

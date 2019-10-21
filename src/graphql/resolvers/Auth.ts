@@ -39,7 +39,6 @@ export const resolvers = {
       return token
     },
     async loginSingleFactor (root, {email, password}, context, info) {
-      console.log('in resolver loginSingleFactor')
       const token = await loginSingleFactor(email, password)
       return token
     },
