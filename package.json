@@ -38,7 +38,7 @@
       "qrcode": "^1.4.0",
       "reflect-metadata": "^0.1.13",
       "scrypt": "^6.0.3",
-      "typeorm": "0.2.17"
+      "typeorm": "0.2.25"
    },
    "scripts": {
       "fix": "eslint --fix --ext .ts src/",
